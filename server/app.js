@@ -13,8 +13,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/test', (req, res) => {
-    const value = req.body;
-    console.log("the received data is ", value);
+   // const value = req.body.key;
+    console.log("Data received");
     res.status(200).send({message:"post successfull", key:1})
 })
 
