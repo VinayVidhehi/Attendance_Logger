@@ -9,7 +9,7 @@ app.use(cors());
 
 // Define a sample route
 app.get('/', (req, res) => {
-  res.send('Hello, this is your Express server with CORS!');
+  res.send('Hello, this is your Express server with CORS!\n');
 });
 
 app.post('/test', (req, res) => {
