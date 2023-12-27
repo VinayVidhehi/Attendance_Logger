@@ -9,6 +9,7 @@ const PORT = 7700;
 // Enable CORS
 app.use(cors());
 
+<<<<<<< HEAD
 // Parse incoming request bodies in a middleware before your handlers
 app.use(bodyParser.json());
 
@@ -19,6 +20,11 @@ const connection = mysql.createConnection({
   user: 'avnadmin',
   password: 'AVNS_PXPi8DwKVq_UOKMdt1m',
   database: 'defaultdb',
+=======
+// Define a sample route
+app.get('/', (req, res) => {
+  res.send('Hello, this is your Express server with CORS!\n');
+>>>>>>> 69ccfbf9d777b81420376c8741aad260d516e19a
 });
 
 connection.connect((err) => {
