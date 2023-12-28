@@ -15,6 +15,7 @@ const App = () => {
   const handleOCR = async () => {
     if (!image) {
       console.error('No image selected');
+      console.log("hi");
       return;
     }
 
