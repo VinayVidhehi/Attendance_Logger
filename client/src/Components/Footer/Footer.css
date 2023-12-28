@@ -1,0 +1,19 @@
+/* Footer.css */
+.footer-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #5cdb95; /* Change to your preferred background color */
+    color: #05386b; /* Change to your preferred text color */
+    font-family: 'Arial', sans-serif; /* Change to your preferred font family */
+  }
+  
+  .main-heading {
+    font-size: 1.5em;
+    margin: 0;
+  }
+  
+  .slogan {
+    font-size: 1em;
+    margin: 5px 0;
+  }
+  

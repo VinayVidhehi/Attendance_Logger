@@ -6,11 +6,9 @@ import Header from './Components/Header/Header';
 import Footer from './Components/Footer/Footer';
 import About from './Components/About/About';
 
-import {Routes, Route} from 'react-router-dom';
-
 const App = () => {
   return (
-    <div>
+    <div className='main-app-container'>
       <Header />
       <Body />
       <About />

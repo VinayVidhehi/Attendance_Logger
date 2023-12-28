@@ -1,0 +1,48 @@
+/* About.css */
+.about-container {
+    display: flex;
+    flex-direction: column; /* Column layout for all screens */
+    align-items: center; /* Center the items horizontally */
+    margin: 20px;
+  }
+
+  .about-profile-container {
+      display: flex;
+      flex-direction: column;
+      margin: 20px;
+      align-items: center;
+      justify-content: space-between;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px; /* Add margin between the heading and profiles */
+  }
+  
+  .about-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .about-section img {
+    width: 100%;
+    max-width: 200px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  /* Media query for larger screens (if needed) */
+  @media screen and (min-width: 601px) {
+    .about-profile-container {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  
+    .about-section {
+      width: 30%; /* Adjust the width for larger screens */
+      margin-bottom: 0;
+    }
+  }
+  

@@ -1,0 +1,19 @@
+/* Header.css */
+.header-container {
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #5cdb95; /* Change to your preferred background color */
+  }
+  
+  .main-heading {
+    color: #05386b;
+    font-size: 2.5em;
+    margin: 0;
+  }
+  
+  .sub-heading {
+    font-size: 1.2em;
+    color: #05386b;
+    margin: 5px 0;
+  }
+  
