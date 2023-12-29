@@ -4,30 +4,21 @@ import './Signin.css'
 function SignInForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('STUDENT'); // Assuming STUDENT is the default role
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Handle form submission logic here, e.g., send data to server
   };
 
-  const handleRoleChange = (event) => {
-    setRole(event.target.value);
-  };
+  
 
   return (
     <div className="signin-from-home">
       <h1>Sign In</h1>
       <h2>know your attendance with a single click</h2>
 
-      <div className="role-selector">
-        <label htmlFor="role">Please select your role:</label>
-        <select id="role" value={role} onChange={handleRoleChange}>
-          <option value="STUDENT">STUDENT</option>
-          <option value="TUTOR">TUTOR</option>
-          <option value="PARENT">PARENT</option>
-        </select>
-      </div>
+    
 
       <form onSubmit={handleSubmit}>
         <div className="email-field">
