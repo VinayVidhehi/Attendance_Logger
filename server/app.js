@@ -20,11 +20,7 @@ const connection = mysql.createConnection({
   user: 'avnadmin',
   password: 'AVNS_PXPi8DwKVq_UOKMdt1m',
   database: 'defaultdb',
-=======
 // Define a sample route
-app.get('/', (req, res) => {
-  res.send('Hello, this is your Express server with CORS!\n');
->>>>>>> 69ccfbf9d777b81420376c8741aad260d516e19a
 });
 
 connection.connect((err) => {
@@ -35,6 +31,9 @@ connection.connect((err) => {
   console.log('Connected to MySQL database');
 });
 
+app.get('/', (req, res) => {
+  res.send('Hello, this is your Express server with CORS!\n');
+});
 // Define the POST endpoint for ESP32 requests
 app.post('/update-attendance', (req, res) => {
   // Extract the string containing USNs from the request payload
