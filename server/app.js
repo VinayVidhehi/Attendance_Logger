@@ -9,7 +9,6 @@ const PORT = 7700;
 // Enable CORS
 app.use(cors());
 
-<<<<<<< HEAD
 // Parse incoming request bodies in a middleware before your handlers
 app.use(bodyParser.json());
 
