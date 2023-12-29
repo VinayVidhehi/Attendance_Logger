@@ -31,7 +31,7 @@ connection.connect((err) => {
 });
 
 app.get('/', (req, res) => {
-  console.log("ids of student who are present are ",req.query.id);
+  console.log("ids of student who are present are ",req.query);
   res.json({message: 'Hello, this is your Express server with CORS!\n'});
 });
 // Define the POST endpoint for ESP32 requests
