@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import SignInForm from './Signin';
+import Signup from './Signup';
 import performOCR from '../OCRUtil';
 
 const Body = () => {
@@ -29,7 +29,7 @@ const Body = () => {
     return (
       <div>
         <div>
-          <SignInForm />
+          <Signup />
         </div>
         <input type="file" accept="image/*" onChange={handleImageChange} />
         <button onClick={handleOCR}>Perform OCR</button>
