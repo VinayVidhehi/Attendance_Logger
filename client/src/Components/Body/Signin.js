@@ -1,58 +1,55 @@
 import React, { useState } from 'react';
-import './Signin.css'
+import SignInForm from './Signin';
+import performOCR from '../OCRUtil';
+import './ocr.css';
 
-function SignInForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
+const Body = () => {
+  const [image, setImage] = useState(null);
+  const [extractedText, setExtractedText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFileUploaded, setIsFileUploaded] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here, e.g., send data to server
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setImage(file);
+    setIsFileUploaded(false); // Reset file uploaded state
   };
 
-  
+  const handleOCR = async () => {
+    if (!image) {
+      console.error('No image selected');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const text = await performOCR(image);
+
+      // Simulating a delay for the loading spinner (replace with actual backend call)
+      setTimeout(() => {
+        setIsLoading(false);
+        setExtractedText(text);
+        setIsFileUploaded(true); // Set file uploaded state
+      }, 2000);
+    } catch (error) {
+      console.error('Error performing OCR:', error);
+    }
+  };
 
   return (
-    <div className="signin-from-home">
-      <h1>Sign In</h1>
-      <h2>know your attendance with a single click</h2>
-
-    
-
-      <form onSubmit={handleSubmit}>
-        <div className="email-field">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Type your Email"
-          />
-        </div>
-
-        <div className="password-field">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Type your password"
-          />
-        </div>
-
-        <button type="submit">Login</button>
-        <a href="#">Forgot your password?</a>
-      </form>
-
-      <p className="lorem-ipsum">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout.
-      </p>
+    <div>
+      <div>
+        <SignInForm />
+      </div>
+      <input type="file" accept="image/*" onChange={handleImageChange} />
+      <button onClick={handleOCR} disabled={isLoading}>
+        Perform OCR
+      </button>
+      {isLoading && <div>Loading...</div>}
+      {isFileUploaded && <div>File uploaded</div>}
     </div>
   );
-}
+};
 
-export default SignInForm;
+export default Body;
