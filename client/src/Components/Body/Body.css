@@ -1,27 +1,15 @@
 
-/* h2{
- 
- font-size: 30px;
- display: flex;
- flex-direction: column;
- margin: 20px;
- align-items: center;
- justify-content: space-between;
-}
-h3{
-    font-size: 20px;
-    margin: 20px;
-}     */
-
 .welcome-content {
     display: flex;
     justify-content: space-between;
     margin: 20px;
+    font-size: 40px;
   }
   
   .text-content {
     max-width: 100%;
     color: #05386b;
+    font-size: 20px;
   }
   body {
     color: #edf5e1;
@@ -30,11 +18,13 @@ h3{
   div {
     color: #edf5e1;
     background-color: #5cdb95;
+    font-stretch: expanded;
+
   }
   
   h1, h2, h3 {
     color: #edf5e1;
-    margin: 20px;
+    margin: 30px;
   }
   h2{
     font-size: large;
@@ -43,7 +33,8 @@ h3{
   .welcome{
     color: #05386b;
     font-size: 25px;
-    margin: 15px;
+    margin: 20px;
+    text-align: center;
   }
 ul{
     font-size: 20px;
@@ -54,14 +45,16 @@ ul{
 .bouncing-text {
     font-size: 24px;
     animation: bounce 1s infinite alternate;
-    margin: 20px;
+    margin: 80px;
+    margin-top: 50px;
     text-align: center;
   }
   .features-section {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 50px;
     margin-left: 10px;
+    
 
   }
   
@@ -74,5 +67,20 @@ p{
     margin:10px;
 }
 .login_button{
-    margin: 35px;
+    margin-top: 45px;
+    padding: 10px 20px;
+    background-color: #05386b;
+    color: #edf5e1;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    }
+    
+    .login-button:hover {
+      background-color: #379683;
+    }
+
+section{
+    margin: 20px;
 }

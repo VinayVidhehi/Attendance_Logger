@@ -19,7 +19,7 @@ const Body = () => {
       {location.state && location.state.email && location.state.password ? (
         <p>Hello, welcome to AMS!</p>
       ) : (
-        <Link to="/login" >Login</Link>
+        <Link to="/login" className='login_button' >Login</Link>
       )}
       <section>
        <div className="welcome-content">
@@ -34,7 +34,7 @@ const Body = () => {
         </section>
       {/*<PerformOCR />*/}
       {/* Additional Section for Features */}
-      <section>
+      <section className='features'>
               <div className="features-section">
         <p className='welcome'>Key Features</p>
         <ul>
