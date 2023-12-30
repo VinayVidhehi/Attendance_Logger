@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import {useLocation, Link } from 'react-router-dom';
 //import PerformOCR from './OCR';
+import "./Body.css"
 
 const Body = () => {
   const location = useLocation();
@@ -18,13 +19,41 @@ const Body = () => {
       {location.state && location.state.email && location.state.password ? (
         <p>Hello, welcome to AMS!</p>
       ) : (
-        <Link to="/login">Login</Link>
+        <Link to="/login" >Login</Link>
       )}
-      <div>
-        <h3>do something here, to start with, click on login there go to signup and sign up urself later you will come here back and i ll greet you, subsequent times, you can just log in please remove me and add something better, all the login and signup page including myself has to styled properly. Just run client using command npm run start, backend is deployed you dont have to do anything. Lets do something, bigger and better :]</h3>
-      </div>
+      <section>
+       <div className="welcome-content">
+        <div className="text-content">
+          
+          <p className="welcome">Your User-Friendly Attendance Management System</p>
+          <p>
+            Welcome to AMS – the cutting-edge system designed for the Department of ISE. Whether you're a student or staff member, log in or sign up now to experience our seamless attendance management facilities. Streamline your attendance tracking with AMS.
+          </p>
+        </div>
+        </div>
+        </section>
       {/*<PerformOCR />*/}
+      {/* Additional Section for Features */}
+      <section>
+              <div className="features-section">
+        <p className='welcome'>Key Features</p>
+        <ul>
+          <li>Effortless Attendance Tracking</li>
+          <li>Real-time Reporting and Analytics</li>
+          <li>User-Friendly Interface for Both Students and Staff</li>
+          <li>Leave Management with Easy Request Submission</li>
+          
+        </ul>
+        <div className="bouncing-text">I'll add some effect here</div>
+
+       
+      
+      </div>
+      </section>
     </div>
+    
+ 
+
   );
 };
 
