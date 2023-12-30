@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { handleUserLogin, handleUserSignup } = require('./router');
 
 const app = express();
 const PORT = 7700;
@@ -61,6 +62,9 @@ app.post('/update-attendance', (req, res) => {
 
   res.status(200).send('Attendance updated successfully');
 });
+
+app.post('/signup', handleUserSignup)
+app.post('/login', handleUserLogin);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
