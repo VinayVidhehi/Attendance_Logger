@@ -165,8 +165,24 @@ function saveAttendanceToDB(attendanceString) {
   });
 }
 
+const getAttendance = async(req, res) => {
+  // Assuming you have a table named DBS_Lab_eg with columns 'date' and 'status'
+  const query = 'SELECT * FROM DBS_Lab_eg';
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching attendance from database:', err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      console.log('Attendance fetched from database:', results);
+      res.json(results);
+    }
+  });
+}
+
 module.exports = {
   handleUserLogin,
   handleUserSignup,
   attendanceUpdate,
+  getAttendance,
 };

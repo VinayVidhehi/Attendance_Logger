@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { handleUserLogin, handleUserSignup, attendanceUpdate } = require('./router');
+const { handleUserLogin, handleUserSignup, attendanceUpdate, getAttendance } = require('./router');
 
 const app = express();
 const PORT = 7700;
@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 
 // Change the route to /attendance
 app.get('/attendance', attendanceUpdate);
+app.get('/get-attendance', getAttendance);
 
 app.post('/signup', handleUserSignup);
 app.post('/login', handleUserLogin);
