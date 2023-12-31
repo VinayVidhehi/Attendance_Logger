@@ -1,6 +1,24 @@
 const mongoose = require("mongoose");
 const User = require("./models/user_schema");
 const nodemailer = require("nodemailer");
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: 'attendance-logger-spoorthivarumbudi-ddc7.a.aivencloud.com',
+  port: 12226,
+  user: 'avnadmin',
+  password: 'AVNS_aRs9_9YVW7p-mEzvwzx',
+  database: 'defaultdb',
+});
+
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+  console.log('Connected to MySQL database');
+});
+
 
 (async () => {
   try {
@@ -121,7 +139,34 @@ const handleUserLogin = async (req, res) => {
   }
 };
 
+const attendanceUpdate = async (req, res) => {
+  console.log("Ids of students who are present are ", req.query.id);
+
+  // Save the attendance string to the database
+  const attendanceString = req.query.id;
+  saveAttendanceToDB(attendanceString);
+
+  res.json({ message: 'Hello, this is your Express server with CORS!\n' });
+}
+// Function to save the attendance string to the database
+function saveAttendanceToDB(attendanceString) {
+  // Get the current date in 'YYYY-MM-DD' format
+  const currentDate = new Date().toISOString().split('T')[0];
+
+  // Assuming you have a table named DBS_Lab with columns 'date' and 'status'
+  const query = 'INSERT INTO DBS_Lab_eg (date, status) VALUES (?, ?)';
+
+  connection.query(query, [currentDate, attendanceString], (err, results) => {
+    if (err) {
+      console.error('Error saving attendance to database:', err.message);
+    } else {
+      console.log('Attendance saved to database.', results);
+    }
+  });
+}
+
 module.exports = {
   handleUserLogin,
   handleUserSignup,
+  attendanceUpdate,
 };

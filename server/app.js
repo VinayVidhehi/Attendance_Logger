@@ -1,8 +1,7 @@
 const express = require('express');
-const mysql = require('mysql2');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { handleUserLogin, handleUserSignup } = require('./router');
+const { handleUserLogin, handleUserSignup, attendanceUpdate } = require('./router');
 
 const app = express();
 const PORT = 7700;
@@ -14,57 +13,14 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MySQL Connection
-const connection = mysql.createConnection({
-  host: 'mysql-36e54173-mulberrydatabase.a.aivencloud.com',
-  port: 24400,
-  user: 'avnadmin',
-  password: 'AVNS_PXPi8DwKVq_UOKMdt1m',
-  database: 'defaultdb',
-// Define a sample route
-});
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL database');
-});
+// Change the route to /attendance
+app.get('/attendance', attendanceUpdate);
 
-app.get('/', (req, res) => {
-  console.log("ids of student who are present are ",req.query);
-  res.json({message: 'Hello, this is your Express server with CORS!\n'});
-});
-// Define the POST endpoint for ESP32 requests
-app.post('/update-attendance', (req, res) => {
-  // Extract the string containing USNs from the request payload
-  const usnString = req.body.usnString;
-
-  // Split the string into an array of USNs
-  const usnArray = usnString.split(',');
-
-  // Update the attendance table in the database
-  const currentDate = new Date().toISOString().split('T')[0]; // Get current date in 'YYYY-MM-DD' format
-
-  // Use a prepared statement to update the database
-  const updateQuery = 'UPDATE attendance SET status = 1, date = ? WHERE usn = ?';
-
-  usnArray.forEach((usn) => {
-    connection.query(updateQuery, [currentDate, usn], (err, results) => {
-      if (err) {
-        console.error('Error updating attendance:', err);
-        res.status(500).send('Internal Server Error');
-        return;
-      }
-      console.log(`Attendance updated for USN: ${usn}`);
-    });
-  });
-
-  res.status(200).send('Attendance updated successfully');
-});
-
-app.post('/signup', handleUserSignup)
+app.post('/signup', handleUserSignup);
 app.post('/login', handleUserLogin);
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
