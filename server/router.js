@@ -165,20 +165,60 @@ function saveAttendanceToDB(attendanceString) {
   });
 }
 
-const getAttendance = async(req, res) => {
-  // Assuming you have a table named DBS_Lab_eg with columns 'date' and 'status'
-  const query = 'SELECT * FROM DBS_Lab_eg';
+const getAttendance = async (req, res) => {
+  const { course, email } = req.query;
 
-  connection.query(query, (err, results) => {
+  // Adjust the query to filter by course
+  const query = `SELECT * FROM ${course};`;
+
+  connection.query(query, async (err, results) => {
     if (err) {
       console.error('Error fetching attendance from database:', err.message);
       res.status(500).json({ error: 'Internal Server Error' });
     } else {
       console.log('Attendance fetched from database:', results);
-      res.json(results);
+
+      // Query the students table to get the id based on the provided email
+      const studentsQuery = 'SELECT id, name FROM students WHERE email = ?';
+
+      connection.query(studentsQuery, [email], (studentsErr, studentsResults) => {
+        if (studentsErr) {
+          console.error('Error fetching student ID from database:', studentsErr.message);
+          res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+          console.log('Student ID fetched from database:', studentsResults);
+          const studentID = studentsResults.length > 0 ? studentsResults[0].id : null;
+      
+          // Initialize idthvalue as an empty array
+          let idthvalue = [];
+      
+          // Process attendance data to calculate attendance status
+          const attendanceData = results.map((entry) => {
+            const statusChar = entry.status[studentID-1];
+            const statusBool = statusChar === '1';
+      
+            return {
+              date: entry.date,
+              status: statusBool,
+            };
+          });
+      
+      
+          // Prepare the final response object
+          const responseWithStudentID = {
+            attendance: attendanceData,
+            studentID: studentID,
+            name: studentsResults[0].name,
+          };
+      
+          res.json(responseWithStudentID);
+        }
+      });
+      
     }
   });
-}
+};
+
 
 module.exports = {
   handleUserLogin,

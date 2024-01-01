@@ -31,13 +31,13 @@ const Body = () => {
               <label htmlFor="courseDropdown">Select Course:</label>
               <select id="courseDropdown" onChange={handleCourseChange}>
                 <option value="">Select...</option>
-                <option value="DBS">DBS</option>
+                <option value="DBS_Lab_eg">DBS</option>
                 <option value="AI-ML">AI and ML</option>
               </select>
             </div>
   
             {/* Display attendance based on the selected course */}
-            {selectedCourse && <AttendanceDisplay course={selectedCourse} />}
+            {selectedCourse && <AttendanceDisplay course={selectedCourse} email={location.state.email} />}
           </section>
         </div>
       ) : (

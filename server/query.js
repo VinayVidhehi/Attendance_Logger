@@ -33,15 +33,10 @@ connection.connect((err) => {
 function runQuery() {
     
   const dynamicSQL = `
-    CREATE TABLE IF NOT EXISTS DBS_Lab_eg (
-        id INT PRIMARY KEY AUTO_INCREMENT,
-        date VARCHAR(15),
-        status VARCHAR(100)
-    );
+  INSERT INTO students (id, usn, name, lab, email, counceller) 
+  VALUES (60, '1RV21IS061', 'VINAY KUMAR D', 3, 'vinaykumard.is21@rvce.edu.in', 2);
 `;
-
-
-    connection.query('select * from DBS_Lab_eg;', (error, result) => {
+    connection.query(dynamicSQL, (error, result) => {
         if (error) {
             console.log("Error: ", error.message);
         } else {
