@@ -9,6 +9,9 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [usn, setUsn] = useState("");
   const [OTP, setOTP] = useState(null);
+  const [Name, setName] = useState("");
+  const [batch, setBatch] = useState("");
+  const [Counsellor, setCounsellor] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [messages, setMessages] = useState("enter the correct credentials to sign up");
 
@@ -48,6 +51,9 @@ const Signup = () => {
           password,
           usn,
           OTP,
+          Name, 
+          batch,
+          Counsellor,
         });
         console.log("response is ", response.data)
         if (response.data.key) {
@@ -71,8 +77,11 @@ const Signup = () => {
               <input type="text" placeholder='rvce mail id' value={email} onChange={(e) => setEmail(e.target.value)} />
               {authenticated && <input type="text" placeholder='USN' value={usn} onChange={(e) => setUsn(e.target.value)} />}
               {authenticated && <input type="password" placeholder='new password' value={password} onChange={(e) => setPassword(e.target.value)} />}
-              {authenticated && <input type="Number" placeholder='OTP' value={OTP} onChange={(e) => setOTP(e.target.value)} />}
-  
+              {authenticated && <input type="Number" placeholder='OTP' value={OTP} onChange={(e) => setOTP(e.target.value)}  />}
+              {authenticated && <input type="text" placeholder='Name' value = {Name} onChange={(e) => setName(e.target.value)}/>}
+              {authenticated && <input type="Number" placeholder='batch number' value = {batch} onChange={(e) => setBatch(e.target.value)}/>}
+              {authenticated && <input type="text" placeholder='Counsellor Name' value = {Counsellor} onChange={(e) => setCounsellor(e.target.value)}/>}
+
           <input type="submit" value="Sign up" className='submit'/>
 
         </form>
