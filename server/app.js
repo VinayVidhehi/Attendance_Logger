@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { handleUserLogin, handleUserSignup, attendanceUpdate, getAttendance } = require('./router');
 
 const app = express();
-const PORT = 7700;
+const PORT = 7800;
 
 // Enable CORS
 app.use(cors());

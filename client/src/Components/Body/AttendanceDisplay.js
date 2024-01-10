@@ -3,18 +3,18 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AttendanceDisplay.css'; // Import the CSS file
 
-const AttendanceDisplay = ({ course, email }) => {
+const AttendanceDisplay = (props) => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [name, setName] = useState("user");
 
+  console.log(props.email);
   useEffect(() => {
     // Fetch attendance data when the component mounts
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:7700/get-attendance', {
+        const response = await axios.get('http://localhost:7800/get-attendance', {
           params: {
-            course: course,
-            email: email,
+            email: props.email,
           },
         });
         setAttendanceData(response.data.attendance); // Extract the attendance array
@@ -25,7 +25,7 @@ const AttendanceDisplay = ({ course, email }) => {
     };
 
     fetchData();
-  }, [course, email]); // Dependency array includes course and email
+  }, [props.email]); // Dependency array includes course and email
 
   return (
     <div className="attendance-container">

@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 7800;
+const PORT = 7900;
 
 // Enable CORS
 app.use(cors());
@@ -36,13 +36,14 @@ function runQuery() {
   INSERT INTO students (id, usn, name, lab, email, counceller) 
   VALUES (60, '1RV21IS061', 'VINAY KUMAR D', 3, 'vinaykumard.is21@rvce.edu.in', 2);
 `;
-    connection.query(dynamicSQL, (error, result) => {
-        if (error) {
-            console.log("Error: ", error.message);
-        } else {
-            console.log("Result: ", result);
-        }
-    });
+connection.query('select * from students;', (error, result) => {
+  if (error) {
+      console.log("Error: ", error.message);
+  } else {
+      console.log("Result: ", result);
+  }
+});
+
 }
 
 

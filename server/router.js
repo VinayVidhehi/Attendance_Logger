@@ -79,28 +79,31 @@ const handleUserSignup = async (req, res) => {
       console.log("User with OTP initially:", usersWithOTP);
 
       await sendOTPEmail(email, generatedOTP);
-
+     ////////changes here /////////////////////
       res
         .status(200)
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else {
-      const { email, OTP, password, usn } = req.body;
+      const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
       console.log(
         "details after otp is sent is ",
-        email,
-        OTP,
-        password,
-        usn
+          email,
+          password,
+          usn,
+          OTP,
+          Name, 
+          batch,
+          Counsellor,
       );
       // Handle user registration and OTP validation
       if (!OTP) {
         throw new Error("OTP is required");
       }
 
-      console.log("otp array is ", usersWithOTP);
       const index = usersWithOTP.findIndex(
         (user) => user.email === email
       );
+
       const foundUser = usersWithOTP[index];
       const otp = JSON.stringify(foundUser.OTP);
       //console.log("type of founduser otp is ", typeof(otp), "type of otp is ", typeof(OTP))
@@ -110,8 +113,21 @@ const handleUserSignup = async (req, res) => {
       }
 
       const newUser = new User({ email, password, usn });
+      // save all the incoming variables related to the user to students table in mysql
       await newUser.save();
+      
+      const id = parseInt(usn.substring(usn.length - 3), 10);
+      const query = 'insert into students(id, name, usn, email, lab, counsellor) values (?, ?, ?, ?, ?, ?)';
+      const values = [id, Name, usn, email, batch, Counsellor];
 
+      connection.query(query, values, (error, result) => {
+        if(error) {
+          console.log(error);
+        }else {
+          console.log(result);
+        }
+      })
+      //complete this to save users in students table;
       usersWithOTP.splice(index, 1);
       res.status(200).send({ message: "User saved successfully", key: 1 });
     }
@@ -123,9 +139,11 @@ const handleUserSignup = async (req, res) => {
 
 const handleUserLogin = async (req, res) => {
   const { email, password } = req.body;
+  console.log(email, password);
 
   try {
     const response = await User.findOne({ email});
+    console.log("user is", response);
     if (response.password === password) {
       res.send({ message: "user found", key: 1, response });
     } else {
@@ -148,15 +166,34 @@ const attendanceUpdate = async (req, res) => {
 
   res.json({ message: 'Hello, this is your Express server with CORS!\n' });
 }
+
 // Function to save the attendance string to the database
 function saveAttendanceToDB(attendanceString) {
   // Get the current date in 'YYYY-MM-DD' format
   const currentDate = new Date().toISOString().split('T')[0];
 
-  // Assuming you have a table named DBS_Lab with columns 'date' and 'status'
-  const query = 'INSERT INTO DBS_Lab_eg (date, status) VALUES (?, ?)';
+  // Split the incoming comma-separated string into an array of IDs
+  const incomingIDs = attendanceString.split(',').map(Number);
 
-  connection.query(query, [currentDate, attendanceString], (err, results) => {
+  // Create an array to store the attendance status (0 or 1) for each ID
+  const status = Array(70).fill(0);
+
+  // Loop through the incoming IDs and set the corresponding status to 1
+  incomingIDs.forEach((id) => {
+    // Check if the ID is within the valid range (0 to 69)
+    if (id > 0 && id < 80) {
+      status[id-1] = 1;
+    }
+  });
+
+  // Convert the status array to a string
+  const statusString = status.join('');
+  console.log("status string now is",statusString);
+
+  // Assuming you have a table named DBS_Lab_eg with columns 'date' and 'status'
+  const query = 'INSERT INTO DBS_Lab (date, status) VALUES (?, ?)';
+
+  connection.query(query, [currentDate, statusString], (err, results) => {
     if (err) {
       console.error('Error saving attendance to database:', err.message);
     } else {
@@ -166,10 +203,10 @@ function saveAttendanceToDB(attendanceString) {
 }
 
 const getAttendance = async (req, res) => {
-  const { course, email } = req.query;
-
+  const email = req.query.email;
+  console.log("email ssss", email);
   // Adjust the query to filter by course
-  const query = `SELECT * FROM ${course};`;
+  const query = `SELECT * FROM DBS_Lab_eg;`;
 
   connection.query(query, async (err, results) => {
     if (err) {
@@ -226,3 +263,9 @@ module.exports = {
   attendanceUpdate,
   getAttendance,
 };
+/*
+add two tables into one
+also make the status variable contain another variable 2, so that it will not display attendance on that particular date
+make teachers to login with some code, so that they can see everybody's attendance
+bring the whole attendance to frontend and add filter option 
+*/ 
