@@ -8,9 +8,9 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [usn, setUsn] = useState('');
   const [OTP, setOTP] = useState(null);
-  const [Name, setName] = useState('');
-  const [batch, setBatch] = useState('');
-  const [Counsellor, setCounsellor] = useState(null);
+  const [Name, setName] = useState("");
+  const [batch, setBatch] = useState("");
+  const [Counsellor, setCounsellor] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [messages, setMessages] = useState('Enter the correct credentials to sign up');
 
@@ -48,9 +48,6 @@ const Signup = () => {
           password,
           usn,
           OTP,
-          Name,
-          batch,
-          Counsellor,
         });
 
         if (response.data.key) {
@@ -68,29 +65,15 @@ const Signup = () => {
       <div className="login-hero">
         <h2>Sign up</h2>
         <h4>{messages}</h4>
-        <form action="" onSubmit={handleSignUp}>
-          {/* Your form inputs go here */}
-          <input type="text" placeholder="RVCE mail id" value={email} onChange={(e) => setEmail(e.target.value)} />
-          {authenticated && <input type="text" placeholder="USN" value={usn} onChange={(e) => setUsn(e.target.value)} />}
-          {authenticated && <input type="password" placeholder="New password" value={password} onChange={(e) => setPassword(e.target.value)} />}
-          {authenticated && <input type="number" placeholder="OTP" value={OTP} onChange={(e) => setOTP(e.target.value)} />}
-          {authenticated && <input type="text" placeholder="Name" value={Name} onChange={(e) => setName(e.target.value)} />}
-          {authenticated && <input type="number" placeholder="Batch number" value={batch} onChange={(e) => setBatch(e.target.value)} />}
-          {authenticated && (
-            <div>
-              <label htmlFor="counsellor">Counsellor:</label>
-              <select id="counsellor" value={Counsellor} onChange={(e) => setCounsellor(e.target.value)}>
-                <option value="">Select Counsellor</option>
-                {counsellors.map((c, index) => (
-                  <option key={c} value={index}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+            <form action="" onSubmit={handleSignUp}>
+              {/* Your form inputs go here */}
+              <input type="text" placeholder='rvce mail id' value={email} onChange={(e) => setEmail(e.target.value)} />
+              {authenticated && <input type="text" placeholder='USN' value={usn} onChange={(e) => setUsn(e.target.value)} />}
+              {authenticated && <input type="password" placeholder='new password' value={password} onChange={(e) => setPassword(e.target.value)} />}
+              {authenticated && <input type="Number" placeholder='OTP' value={OTP} onChange={(e) => setOTP(e.target.value)} />}
+  
+          <input type="submit" value="Sign up" className='submit'/>
 
-          <input type="submit" value="Sign up" className="submit" />
         </form>
 
         <span>
