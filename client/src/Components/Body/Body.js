@@ -5,9 +5,8 @@ import AttendanceDisplay from "./AttendanceDisplay";
 import "./Body.css";
 
 const Body = () => {
-
   const [attendancekey, setAttendancekey] = useState(false);
-  const [buttonmessage, setButtonmessage] = useState("view attendance")
+  const [buttonmessage, setButtonmessage] = useState("view attendance");
 
   const location = useLocation();
 
@@ -26,27 +25,30 @@ const Body = () => {
   const handleViewAttendance = () => {
     console.log("view attendance button clicked");
     setAttendancekey(!attendancekey);
-    if(buttonmessage == "close") setButtonmessage("view attendance")
+    if (buttonmessage == "close") setButtonmessage("view attendance");
     else setButtonmessage("close");
-  }
+  };
 
   return (
     <div>
       {location.state && location.state.email && location.state.password ? (
-        <div>Welcome to AMS</div>
+        <div>
+          <div>Welcome to AMS</div>
+          <div>
+            <button onClick={handleViewAttendance}>{buttonmessage}</button>
+          </div>
+        </div>
       ) : (
         <Link to="/login" className="login_button">
           Login
         </Link>
       )}
 
-      <div>
-        <button onClick={handleViewAttendance}>{buttonmessage}</button>
-      </div>
-
-      {attendancekey && <div>
-        <AttendanceDisplay email={location.state.email}/>
-        </div>}
+      {attendancekey && (
+        <div>
+          <AttendanceDisplay email={location.state.email} />
+        </div>
+      )}
 
       <section>
         <div className="welcome-content">

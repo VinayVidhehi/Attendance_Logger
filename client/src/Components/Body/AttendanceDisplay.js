@@ -34,14 +34,17 @@ const AttendanceDisplay = (props) => {
         <thead>
           <tr>
             <th>Date</th>
-            <th>Attendance</th>
+            <th>DBS</th>
+            <th>AI & ML</th>
           </tr>
         </thead>
         <tbody>
           {attendanceData.map((entry, index) => (
             <tr key={index}>
               <td>{entry.date}</td>
-              <td>{entry.status ? 'Present' : 'Absent'}</td>
+              {entry.key == 2 ? <><td>{entry.status ? 'Present' : 'Absent'}</td>
+              <td>-</td></> : <><td>-</td>
+              <td>{entry.status ? 'Present' : 'Absent'}</td></>}
             </tr>
           ))}
         </tbody>

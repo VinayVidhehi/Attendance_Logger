@@ -34,9 +34,9 @@ function runQuery() {
     INSERT INTO course_attendance (id, course52, course53, date, day) VALUES (?, ?, ?, ?, ?);
   `;
 
-  const values = [1, '0111111101011111111111101101111111110010111222222222222222222222222222', '2222222222222222222222222222222222222222222111101111001111101101111011', '2024-01-11', 'thursday'];
+  const values = [2, '2222222222222222222222222222222222222222222111101111001111101101111011', '0111111101011111111111101101111111110010111222222222222222222222222222', '2024-01-11', 'friday'];
 
-  connection.query('select * from course_attendance;', [61], (error, result) => {
+  connection.query('desc students', values, (error, result) => {
     if (error) {
       console.log("Error: ", error.message);
     } else {
@@ -50,3 +50,5 @@ runQuery();
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+//0111111101011111111111101101111111110010111222222222222222222222222222

@@ -113,10 +113,20 @@ const handleUserSignup = async (req, res) => {
       // save all the incoming variables related to the user to students table in mysql
       await newUser.save();
 
+      var counsellorNumber;
+
+      if (Counsellor.startsWith("P")) {
+        counsellorNumber = 1;
+      } else if (Counsellor.startsWith("Sa")) {
+        counsellorNumber = 2;
+      } else {
+        counsellorNumber = 3;
+      }
+
       const id = parseInt(usn.substring(usn.length - 3), 10);
       const query =
         "insert into students(id, name, usn, email, lab, counsellor) values (?, ?, ?, ?, ?, ?)";
-      const values = [id, Name, usn, email, batch, Counsellor];
+      const values = [id, Name, usn, email, batch, counsellorNumber];
 
       connection.query(query, values, (error, result) => {
         if (error) {
@@ -243,7 +253,7 @@ const getAttendance = async (req, res) => {
                   return {
                     date: entry.date,
                     status: statusBool,
-                    key:2,
+                    key: 2,
                   };
                 } else {
                   const statusChar = entry.course52[studentID - 1];
@@ -251,7 +261,7 @@ const getAttendance = async (req, res) => {
                   return {
                     date: entry.date,
                     status: statusBool,
-                    key:1,
+                    key: 1,
                   };
                 }
               } else {
@@ -261,7 +271,7 @@ const getAttendance = async (req, res) => {
                   return {
                     date: entry.date,
                     status: statusBool,
-                    key:1,
+                    key: 1,
                   };
                 } else {
                   const statusChar = entry.course53[studentID - 1];
@@ -269,7 +279,7 @@ const getAttendance = async (req, res) => {
                   return {
                     date: entry.date,
                     status: statusBool,
-                    key:2,
+                    key: 2,
                   };
                 }
               }
