@@ -28,7 +28,7 @@ const Signup = () => {
     if (!authenticated) {
       try {
         const key = 1;
-        const response = await axios.post("http://localhost:7800/signup", {
+        const response = await axios.post("https://textstrict-app.onrender.com/signup", {
           email,
           key,
         });
@@ -46,7 +46,7 @@ const Signup = () => {
       }
     } else {
       try {
-        const response = await axios.post("http://localhost:7800/signup", {
+        const response = await axios.post("https://textstrict-app.onrender.com/signup", {
           email,
           password,
           usn,

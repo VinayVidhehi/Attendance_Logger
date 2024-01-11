@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./models/user_schema");
+const OTPModel = require('./models/otp_schema'); 
 const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
 
@@ -64,25 +65,23 @@ const sendOTPEmail = async (email, otp) => {
 
 const handleUserSignup = async (req, res) => {
   try {
-    const { email, key } = req.body;
+  const { email, key } = req.body;
 
-    if (!email) {
-      throw new Error("email is required");
-    }
+  if (!email) {
+    throw new Error('Email is required');
+  }
 
-    if (key) {
-      // Handle OTP generation and email sending
-      const generatedOTP = generateOTP();
+  if (key) {
+    // Handle OTP generation and email sending
+    const generatedOTP = generateOTP();
 
-      usersWithOTP.unshift({ email, OTP: generatedOTP });
-      console.log("User with OTP initially:", usersWithOTP);
+    // Save OTP to MongoDB
+    await OTPModel.create({ email, otp: generatedOTP });
 
-      await sendOTPEmail(email, generatedOTP);
-      ////////changes here /////////////////////
-      res
-        .status(200)
-        .send({ message: "OTP sent to your email successfully", key: 1 });
-    } else {
+    await sendOTPEmail(email, generatedOTP);
+
+    res.status(200).send({ message: 'OTP sent to your email successfully', key: 1 });
+  } else {
       const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
       console.log(
         "details after otp is sent is ",
@@ -96,16 +95,13 @@ const handleUserSignup = async (req, res) => {
       );
       // Handle user registration and OTP validation
       if (!OTP) {
-        throw new Error("OTP is required");
+        throw new Error('OTP is required');
       }
 
-      const index = usersWithOTP.findIndex((user) => user.email === email);
-
-      const foundUser = usersWithOTP[index];
-      const otp = JSON.stringify(foundUser.OTP);
-      //console.log("type of founduser otp is ", typeof(otp), "type of otp is ", typeof(OTP))
-      if (!foundUser || otp !== OTP) {
-        usersWithOTP.splice(index, 1);
+      // Find the OTP in MongoDB
+      const foundOTP = await OTPModel.findOne({ email });
+      console.log("otp", typeof(foundOTP.otp), typeof(OTP));
+      if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
         throw new Error("Entered OTP doesn't match. Try again later.");
       }
 
@@ -136,7 +132,7 @@ const handleUserSignup = async (req, res) => {
         }
       });
       //complete this to save users in students table;
-      usersWithOTP.splice(index, 1);
+      await OTPModel.findOneAndDelete({ email });
       res.status(200).send({ message: "User saved successfully", key: 1 });
     }
   } catch (error) {
