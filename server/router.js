@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const User = require("./models/user_schema");
-const OTPModel = require('./models/otp_schema'); 
+const OTPModel = require("./models/otp_schema");
 const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const connection = mysql.createConnection({
   host: "attendance-logger-spoorthivarumbudi-ddc7.a.aivencloud.com",
@@ -65,48 +67,44 @@ const sendOTPEmail = async (email, otp) => {
 
 const handleUserSignup = async (req, res) => {
   try {
-  const { email, key } = req.body;
+    const { email, key } = req.body;
 
-  if (!email) {
-    throw new Error('Email is required');
-  }
+    if (!email) {
+      throw new Error("Email is required");
+    }
 
-  if (key) {
-    // Handle OTP generation and email sending
-    const generatedOTP = generateOTP();
+    if (key) {
+      // Handle OTP generation and email sending
+      const generatedOTP = generateOTP();
 
-    // Save OTP to MongoDB
-    await OTPModel.create({ email, otp: generatedOTP });
+      // Save OTP to MongoDB
+      await OTPModel.create({ email, otp: generatedOTP });
 
-    await sendOTPEmail(email, generatedOTP);
+      await sendOTPEmail(email, generatedOTP);
 
-    res.status(200).send({ message: 'OTP sent to your email successfully', key: 1 });
-  } else {
+      res
+        .status(200)
+        .send({ message: "OTP sent to your email successfully", key: 1 });
+    } else {
       const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
-      console.log(
-        "details after otp is sent is ",
-        email,
-        password,
-        usn,
-        OTP,
-        Name,
-        batch,
-        Counsellor
-      );
+
       // Handle user registration and OTP validation
       if (!OTP) {
-        throw new Error('OTP is required');
+        throw new Error("OTP is required");
       }
 
       // Find the OTP in MongoDB
       const foundOTP = await OTPModel.findOne({ email });
-      console.log("otp", typeof(foundOTP.otp), typeof(OTP));
+
       if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
         throw new Error("Entered OTP doesn't match. Try again later.");
       }
 
-      const newUser = new User({ email, password, usn });
-      // save all the incoming variables related to the user to students table in mysql
+      // Hash the password before storing it
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      const newUser = new User({ email, password: hashedPassword, usn });
+      // save all the incoming variables related to the user to students table in MySQL
       await newUser.save();
 
       var counsellorNumber;
@@ -131,33 +129,14 @@ const handleUserSignup = async (req, res) => {
           console.log(result);
         }
       });
-      //complete this to save users in students table;
+
+      // Complete this to save users in students table;
       await OTPModel.findOneAndDelete({ email });
       res.status(200).send({ message: "User saved successfully", key: 1 });
     }
   } catch (error) {
     console.error("Error during user signup:", error);
     res.status(500).send({ message: error.message, key: 0 });
-  }
-};
-
-const handleUserLogin = async (req, res) => {
-  const { email, password } = req.body;
-  console.log(email, password);
-
-  try {
-    const response = await User.findOne({ email });
-    console.log("user is", response);
-    if (response.password === password) {
-      res.send({ message: "user found", key: 1, response });
-    } else {
-      res.send({ message: "user not found", key: 0 });
-    }
-  } catch (error) {
-    console.log(
-      "error while searching for user, try again later",
-      error.message
-    );
   }
 };
 
