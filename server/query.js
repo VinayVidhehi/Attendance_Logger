@@ -19,7 +19,6 @@ const connection = mysql.createConnection({
   user: 'avnadmin',
   password: 'AVNS_aRs9_9YVW7p-mEzvwzx',
   database: 'defaultdb',
-// Define a sample route
 });
 
 connection.connect((err) => {
@@ -31,25 +30,23 @@ connection.connect((err) => {
 });
 
 function runQuery() {
-    
   const dynamicSQL = `
-  INSERT INTO students (id, usn, name, lab, email, counceller) 
-  VALUES (60, '1RV21IS061', 'VINAY KUMAR D', 3, 'vinaykumard.is21@rvce.edu.in', 2);
-`;
-connection.query('select * from students;', (error, result) => {
-  if (error) {
+    INSERT INTO course_attendance (id, course52, course53, date, day) VALUES (?, ?, ?, ?, ?);
+  `;
+
+  const values = [1, '0111111101011111111111101101111111110010111222222222222222222222222222', '2222222222222222222222222222222222222222222111101111001111101101111011', '2024-01-11', 'thursday'];
+
+  connection.query('select * from course_attendance;', [61], (error, result) => {
+    if (error) {
       console.log("Error: ", error.message);
-  } else {
+    } else {
       console.log("Result: ", result);
-  }
-});
-
+    }
+  });
 }
-
 
 runQuery();
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-  
+  console.log(`Server is running on port ${PORT}`);
+});
