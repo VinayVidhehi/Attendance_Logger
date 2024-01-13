@@ -5,6 +5,7 @@ import Footer from './Components/Footer/Footer';
 import Signup from './Components/Signup/Signup';
 import ChooseUser from './Components/ChooseUser/ChooseUser';
 import Login from './Components/Login/Login';
+import Staff from './Components/Staff/Staff';
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ const App = () => {
         <Route path='/signup' element={<Signup />} />
         <Route path='/choose' element={<ChooseUser />} />
         <Route path='/' element={<Body />} />
+        <Route path='/staff' element={<Staff />} />
       </Routes>
       <Footer />
     </div>

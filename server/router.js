@@ -135,7 +135,7 @@ const handleUserSignup = async (req, res) => {
         await OTPModel.findOneAndDelete({ email });
         res.status(200).send({ message: "User saved successfully", key: 1 });
       } else {
-        const [Name, password, OTP, courseId, Counsellor, email] = req.body;
+        const {Name, password, OTP, courseId, batch, email} = req.body;
 
         if (!OTP) {
           throw new Error("OTP is required");
@@ -145,7 +145,7 @@ const handleUserSignup = async (req, res) => {
         const foundOTP = await OTPModel.findOne({ email });
 
         if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
-          throw new Error("Entered OTP doesn't match. Try again later.");
+          res.send({message:"entered OTP doesnt match, try again", key:2})
         }
 
         // Hash the password before storing it
@@ -154,7 +154,7 @@ const handleUserSignup = async (req, res) => {
         const newUser = new User({
           email,
           password: hashedPassword,
-          isCounsellor: 1,
+          isCounsellor: true,
         });
         // save all the incoming variables related to the user to students table in MySQL
         await newUser.save();
@@ -167,7 +167,7 @@ const handleUserSignup = async (req, res) => {
         }  
         const query =
           "insert into staff(name, email, course_id, counceller_id) values (?, ?, ?, ?)";
-        const values = [Name, email, course, Counsellor];
+        const values = [Name, email, course, batch];
 
         connection.query(query, values, (error, result) => {
           if (error) {
@@ -316,11 +316,27 @@ const handleUserLogin = async (req, res) => {
   }
 };
 
+const getStaffAttendance = async(req, res) => {
+  const {email} = req.query;
+  
+  const response = await User.findOne({email});
+  console.log("response", response);
+
+  if(response.isCounsellor)
+  {
+    console.log("here at response")
+    res.status(200).send({message:"staff found successfully", key:1})
+  } else {
+    res.status(500).send({message: "no user found"});
+  }
+}
+
 module.exports = {
   handleUserLogin,
   handleUserSignup,
   attendanceUpdate,
   getAttendance,
+  getStaffAttendance,
 };
 /*
 hashing passwords

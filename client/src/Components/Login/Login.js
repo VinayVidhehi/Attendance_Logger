@@ -25,6 +25,10 @@ const Login = () => {
         //console.log("response has all this and that is ", response.data.response.nickname);
         navigate('/', {state:{email,password}});
     }
+    else if(response.data.key === 2) {
+        setMessages("logged in succuessfully");
+        navigate('/staff', {state:{email,password}});
+    }
     else {
         setMessages("wrong credentials, try again");
     }

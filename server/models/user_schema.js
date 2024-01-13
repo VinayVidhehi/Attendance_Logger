@@ -9,6 +9,10 @@ const userSchema = new Schema({
     trim: true,
     lowercase: true,
   },
+  isCounsellor: {
+    type: Boolean,
+    required: true,
+  },
   password: {
     type: String,
     required: true,

@@ -19,7 +19,7 @@ const Signup = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   console.log("the location is ", location.state.key);
   const isStudent = location.state.key;
 
@@ -83,9 +83,11 @@ const Signup = () => {
             OTP,
           });
 
-          if (response.data.key) {
+          if (response.data.key === 1) {
             console.log("Sending", email, password);
             navigate("/staff", { state: { email, password } });
+          } else if (response.data.key === 2) {
+            setMessages(response.data.message);
           }
         } catch (error) {
           console.log("Error while signing up: ", error.message);
@@ -98,7 +100,7 @@ const Signup = () => {
     <div className="login-main-container">
       <div className="login-hero">
         {isStudent && <h2>Sign up </h2>}
-        {!isStudent && <h2>Sign up for Staff</h2> }
+        {!isStudent && <h2>Sign up for Staff</h2>}
         <h4>{messages}</h4>
         <form onSubmit={handleSignUp}>
           {/* Your form inputs go here */}
@@ -108,15 +110,14 @@ const Signup = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {authenticated &&
-            isStudent && (
-              <input
-                type="text"
-                placeholder="USN"
-                value={usn}
-                onChange={(e) => setUsn(e.target.value)}
-              />
-            )}
+          {authenticated && isStudent && (
+            <input
+              type="text"
+              placeholder="USN"
+              value={usn}
+              onChange={(e) => setUsn(e.target.value)}
+            />
+          )}
           {authenticated && (
             <input
               type="password"
@@ -146,7 +147,12 @@ const Signup = () => {
             <select value={batch} onChange={(e) => setBatch(e.target.value)}>
               <option value="" disabled>
                 {isStudent && <h3>Select </h3>}
-                {!isStudent && <h3>if you are the counsellor, then select the batch for which you are counsellor for. Skip otherwise</h3>}
+                {!isStudent && (
+                  <h3>
+                    if you are the counsellor, then select the batch for which
+                    you are counsellor for. Skip otherwise
+                  </h3>
+                )}
               </option>
               {labs.map((lab, index) => (
                 <option key={index} value={lab}>
