@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Signup.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const Signup = () => {
@@ -15,9 +15,15 @@ const Signup = () => {
   const [messages, setMessages] = useState(
     "Enter the correct credentials to sign up"
   );
+  const [courseId, setCourseId] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  console.log("the location is ", location.state.key);
+  const isStudent = location.state.key;
 
+  const courses = ["AI & ML", "DBS"];
   const counsellors = ["Padmashree", "Sagar", "Srinivas"]; // Add your list of counsellors here
   const labs = ["1", "2", "3"]; // Updated list of labs
 
@@ -28,7 +34,7 @@ const Signup = () => {
     if (!authenticated) {
       try {
         const key = 1;
-        const response = await axios.post("https://textstrict-app.onrender.com/signup", {
+        const response = await axios.post("http://localhost:7800/signup", {
           email,
           key,
         });
@@ -45,23 +51,45 @@ const Signup = () => {
         console.log("Error while signing up: ", error.message);
       }
     } else {
-      try {
-        const response = await axios.post("https://textstrict-app.onrender.com/signup", {
-          email,
-          password,
-          usn,
-          Name,
-          Counsellor,
-          batch,
-          OTP,
-        });
+      if (location.state.key) {
+        try {
+          const response = await axios.post("http://localhost:7800/signup", {
+            email,
+            key: 2,
+            password,
+            usn,
+            Name,
+            Counsellor,
+            batch,
+            OTP,
+          });
 
-        if (response.data.key) {
-          console.log("Sending", email, password);
-          navigate("/", { state: { email, password } });
+          if (response.data.key) {
+            console.log("Sending", email, password);
+            navigate("/", { state: { email, password } });
+          }
+        } catch (error) {
+          console.log("Error while signing up: ", error.message);
         }
-      } catch (error) {
-        console.log("Error while signing up: ", error.message);
+      } else {
+        try {
+          const response = await axios.post("http://localhost:7800/signup", {
+            email,
+            key: 3,
+            password,
+            Name,
+            batch,
+            courseId,
+            OTP,
+          });
+
+          if (response.data.key) {
+            console.log("Sending", email, password);
+            navigate("/staff", { state: { email, password } });
+          }
+        } catch (error) {
+          console.log("Error while signing up: ", error.message);
+        }
       }
     }
   };
@@ -69,9 +97,10 @@ const Signup = () => {
   return (
     <div className="login-main-container">
       <div className="login-hero">
-        <h2>Sign up</h2>
+        {isStudent && <h2>Sign up </h2>}
+        {!isStudent && <h2>Sign up for Staff</h2> }
         <h4>{messages}</h4>
-        <form action="" onSubmit={handleSignUp}>
+        <form onSubmit={handleSignUp}>
           {/* Your form inputs go here */}
           <input
             type="text"
@@ -79,14 +108,15 @@ const Signup = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {authenticated && (
-            <input
-              type="text"
-              placeholder="USN"
-              value={usn}
-              onChange={(e) => setUsn(e.target.value)}
-            />
-          )}
+          {authenticated &&
+            isStudent && (
+              <input
+                type="text"
+                placeholder="USN"
+                value={usn}
+                onChange={(e) => setUsn(e.target.value)}
+              />
+            )}
           {authenticated && (
             <input
               type="password"
@@ -111,12 +141,29 @@ const Signup = () => {
               onChange={(e) => setName(e.target.value)}
             />
           )}
+
           {authenticated && (
+            <select value={batch} onChange={(e) => setBatch(e.target.value)}>
+              <option value="" disabled>
+                {isStudent && <h3>Select </h3>}
+                {!isStudent && <h3>if you are the counsellor, then select the batch for which you are counsellor for. Skip otherwise</h3>}
+              </option>
+              {labs.map((lab, index) => (
+                <option key={index} value={lab}>
+                  {lab}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {authenticated && isStudent && (
             <select
               value={Counsellor}
               onChange={(e) => setCounsellor(e.target.value)}
             >
-              <option value="" disabled>Select counsellor</option>
+              <option value="" disabled>
+                Select counsellor
+              </option>
               {counsellors.map((counselor, index) => (
                 <option key={index} value={counselor}>
                   {counselor}
@@ -125,18 +172,20 @@ const Signup = () => {
             </select>
           )}
 
-          {authenticated && (
-            <select
-              value={batch}
-              onChange={(e) => setBatch(e.target.value)}
-            >
-              <option value="" disabled>Select lab</option>
-              {labs.map((lab, index) => (
-                <option key={index} value={lab}>
-                  {lab}
-                </option>
-              ))}
-            </select>
+          {authenticated && !isStudent && (
+            <div>
+              <h3>what course do you handle</h3>
+              <select
+                value={courseId}
+                onChange={(e) => setCourseId(e.target.value)}
+              >
+                {courses.map((courseId, index) => (
+                  <option key={index} value={courseId}>
+                    {courseId}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
 
           <input type="submit" value="Sign up" className="submit" />

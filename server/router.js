@@ -73,7 +73,7 @@ const handleUserSignup = async (req, res) => {
       throw new Error("Email is required");
     }
 
-    if (key) {
+    if (key == 1) {
       // Handle OTP generation and email sending
       const generatedOTP = generateOTP();
 
@@ -86,53 +86,101 @@ const handleUserSignup = async (req, res) => {
         .status(200)
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else {
-      const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
+      if (key == 2) {
+        const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
 
-      // Handle user registration and OTP validation
-      if (!OTP) {
-        throw new Error("OTP is required");
-      }
-
-      // Find the OTP in MongoDB
-      const foundOTP = await OTPModel.findOne({ email });
-
-      if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
-        throw new Error("Entered OTP doesn't match. Try again later.");
-      }
-
-      // Hash the password before storing it
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      const newUser = new User({ email, password: hashedPassword, usn });
-      // save all the incoming variables related to the user to students table in MySQL
-      await newUser.save();
-
-      var counsellorNumber;
-
-      if (Counsellor.startsWith("P")) {
-        counsellorNumber = 1;
-      } else if (Counsellor.startsWith("Sa")) {
-        counsellorNumber = 2;
-      } else {
-        counsellorNumber = 3;
-      }
-
-      const id = parseInt(usn.substring(usn.length - 3), 10);
-      const query =
-        "insert into students(id, name, usn, email, lab, counsellor) values (?, ?, ?, ?, ?, ?)";
-      const values = [id, Name, usn, email, batch, counsellorNumber];
-
-      connection.query(query, values, (error, result) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(result);
+        // Handle user registration and OTP validation
+        if (!OTP) {
+          throw new Error("OTP is required");
         }
-      });
 
-      // Complete this to save users in students table;
-      await OTPModel.findOneAndDelete({ email });
-      res.status(200).send({ message: "User saved successfully", key: 1 });
+        // Find the OTP in MongoDB
+        const foundOTP = await OTPModel.findOne({ email });
+
+        if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
+          throw new Error("Entered OTP doesn't match. Try again later.");
+        }
+
+        // Hash the password before storing it
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const newUser = new User({ email, password: hashedPassword, usn });
+        // save all the incoming variables related to the user to students table in MySQL
+        await newUser.save();
+
+        var counsellorNumber;
+
+        if (Counsellor.startsWith("P")) {
+          counsellorNumber = 1;
+        } else if (Counsellor.startsWith("Sa")) {
+          counsellorNumber = 2;
+        } else {
+          counsellorNumber = 3;
+        }
+
+        const id = parseInt(usn.substring(usn.length - 3), 10);
+        const query =
+          "insert into students(id, name, usn, email, lab, counsellor) values (?, ?, ?, ?, ?, ?)";
+        const values = [id, Name, usn, email, batch, counsellorNumber];
+
+        connection.query(query, values, (error, result) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(result);
+          }
+        });
+
+        // Complete this to save users in students table;
+        await OTPModel.findOneAndDelete({ email });
+        res.status(200).send({ message: "User saved successfully", key: 1 });
+      } else {
+        const [Name, password, OTP, courseId, Counsellor, email] = req.body;
+
+        if (!OTP) {
+          throw new Error("OTP is required");
+        }
+
+        // Find the OTP in MongoDB
+        const foundOTP = await OTPModel.findOne({ email });
+
+        if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
+          throw new Error("Entered OTP doesn't match. Try again later.");
+        }
+
+        // Hash the password before storing it
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const newUser = new User({
+          email,
+          password: hashedPassword,
+          isCounsellor: 1,
+        });
+        // save all the incoming variables related to the user to students table in MySQL
+        await newUser.save();
+        //changing course string to id
+        var course = 0;
+        if(courseId.startsWith("DBS")) {
+          course = 53;
+        } else if(courseId.startsWith("AI")) {
+          course = 52;
+        }  
+        const query =
+          "insert into staff(name, email, course_id, counceller_id) values (?, ?, ?, ?)";
+        const values = [Name, email, course, Counsellor];
+
+        connection.query(query, values, (error, result) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(result);
+          }
+        });
+
+        // Complete this to save users in students table;
+        await OTPModel.findOneAndDelete({ email });
+        res.status(200).send({ message: "User saved successfully", key: 1 });
+      }
     }
   } catch (error) {
     console.error("Error during user signup:", error);
@@ -187,7 +235,7 @@ function saveAttendanceToDB(attendanceString) {
 
 const getAttendance = async (req, res) => {
   const email = req.query.email;
-  console.log("email ssss", email);
+
   // Adjust the query to filter by course
   const query = `SELECT * FROM course_attendance;`;
 
@@ -216,48 +264,30 @@ const getAttendance = async (req, res) => {
             const studentID =
               studentsResults.length > 0 ? studentsResults[0].id : null;
 
-            // Initialize idthvalue as an empty array
-            let idthvalue = [];
-
-            // Process attendance data to calculate attendance status
+            // Process attendance data to calculate attendance status and percentage
             const attendanceData = results.map((entry) => {
-              if (entry.day == "thursday") {
-                if (studentID > 43) {
-                  const statusChar = entry.course53[studentID - 1];
-                  const statusBool = statusChar === "1";
-                  return {
-                    date: entry.date,
-                    status: statusBool,
-                    key: 2,
-                  };
-                } else {
-                  const statusChar = entry.course52[studentID - 1];
-                  const statusBool = statusChar === "1";
-                  return {
-                    date: entry.date,
-                    status: statusBool,
-                    key: 1,
-                  };
-                }
-              } else {
-                if (studentID > 43) {
-                  const statusChar = entry.course52[studentID - 1];
-                  const statusBool = statusChar === "1";
-                  return {
-                    date: entry.date,
-                    status: statusBool,
-                    key: 1,
-                  };
-                } else {
-                  const statusChar = entry.course53[studentID - 1];
-                  const statusBool = statusChar === "1";
-                  return {
-                    date: entry.date,
-                    status: statusBool,
-                    key: 2,
-                  };
+              const totalDays = Object.keys(entry).filter((key) =>
+                key.startsWith("course")
+              ).length;
+              let presentDays = 0;
+
+              for (let i = 52; i <= 53; i++) {
+                const statusChar = entry[`course${i}`][studentID - 1];
+                const statusBool = statusChar === "1";
+
+                if (statusBool) {
+                  presentDays++;
                 }
               }
+
+              const attendancePercentage = (presentDays / totalDays) * 100;
+
+              return {
+                date: entry.date,
+                status: attendancePercentage >= 75, // Assuming 75% as the threshold for 'Present'
+                key: studentID > 43 ? 2 : 1,
+                attendancePercentage: attendancePercentage.toFixed(2),
+              };
             });
 
             console.log(attendanceData);
@@ -276,6 +306,16 @@ const getAttendance = async (req, res) => {
   });
 };
 
+const handleUserLogin = async (req, res) => {
+  const { email, password } = req.body;
+  console.log("sa", email, password);
+  const response = await User.findOne({ email });
+  console.log(response);
+  if (response.password === password) {
+    res.send({ key: 1, message: "user found" });
+  }
+};
+
 module.exports = {
   handleUserLogin,
   handleUserSignup,
@@ -283,8 +323,11 @@ module.exports = {
   getAttendance,
 };
 /*
-add two tables into one
-also make the status variable contain another variable 2, so that it will not display attendance on that particular date
+hashing passwords
+attendance percentage column
 make teachers to login with some code, so that they can see everybody's attendance
 bring the whole attendance to frontend and add filter option 
+*/
+/*
+change counceller attribute
 */

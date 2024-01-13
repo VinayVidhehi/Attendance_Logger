@@ -15,7 +15,7 @@ const Login = () => {
     event.preventDefault();
     setMessages("loading...,")
     // console.log("password is ", password);
-    const response = await axios.post('https://textstrict-app.onrender.com/login', {
+    const response = await axios.post('http://localhost:7800/login', {
       email,
       password,
     })
@@ -41,7 +41,7 @@ const Login = () => {
         <input type="password" placeholder='enter password' value={password} onChange={(e) => setPassword(e.target.value)} />
         <input type="submit" value="Sign in" className='submit'/>
         </form>
-        <span>Don't have an account? <Link to='/signup'>Sign up</Link></span>
+        <span>Don't have an account? <Link to='/choose'>Sign up</Link></span>
       </div>
     </div>
   )
