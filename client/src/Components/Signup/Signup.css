@@ -90,9 +90,9 @@
   /* Button */
   button {
     padding: 8px 20px;
-    border: none;
+    border: 10px;
     border-radius: 3px;
-    background-color: #007bff;
+    background-color: #05386b;
     color: #fff;
     height: 60px;
     border-radius: 30px;

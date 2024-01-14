@@ -38,12 +38,14 @@ const Body = () => {
             <button onClick={handleViewAttendance}>{buttonmessage}</button>
           </div>
         </div>
-      ) : (
-        <Link to="/login" className="login_button">
+      
+      ) :   (<div className="login">
+        <Link to="/login"  className="login_button">
           Login
         </Link>
+        </div>
       )}
-
+     
       {attendancekey && (
         <div>
           <AttendanceDisplay email={location.state.email} />
@@ -69,7 +71,7 @@ const Body = () => {
       <section className="features">
         <div className="features-section">
           <p className="welcome">Key Features</p>
-          <ul>
+          <ul classname = "list">
             <li>Effortless Attendance Tracking</li>
             <li>Real-time Reporting and Analytics</li>
             <li>User-Friendly Interface for Both Students and Staff</li>

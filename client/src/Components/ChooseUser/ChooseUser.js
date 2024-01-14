@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./ChooseUser.css"; // Make sure to import your CSS file
+
+// Import your image
+import yourImageSrc from "/home/spoorthi/Attendance_Logger/client/src/images/STAFF.png"; // Replace with the actual path
+import myImageSrc from "/home/spoorthi/Attendance_Logger/client/src/images/student.png"; // Replace with the actual path
+import SubmitImageSrc from "/home/spoorthi/Attendance_Logger/client/src/images/SUBMIT.png"; // Replace with the actual path
+import  Chooseuser from "/home/spoorthi/Attendance_Logger/client/src/images/Chooseuser.png"; // Replace with the actual path
 
 const ChooseUser = () => {
   const [staff, setStaff] = useState(false);
@@ -12,17 +19,26 @@ const ChooseUser = () => {
     e.preventDefault();
 
     if (password === correctPassword) {
-      navigate('/signup', { state: { key: false } });
+      navigate("/signup", { state: { key: false } });
     } else {
-      navigate('/');
+      navigate("/");
     }
   };
 
+  const handleStudentSelection = () => {
+    navigate("/signup", { state: { key: true } });
+  };
+
   return (
-    <div>
-      <h1>ChooseUser</h1>
+    <div className="choose-user-container">
+      <h1> Choose User</h1>
       <div>
-        <button onClick={() => setStaff(true)}>staff</button>
+        <img
+          src={yourImageSrc}
+          alt="Staff"
+          className="user-image"
+          onClick={() => setStaff(true)}
+        />
         {staff && (
           <form onSubmit={handleStaffSelection}>
             <label>
@@ -33,12 +49,20 @@ const ChooseUser = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </label>
-            <button type="submit">Submit</button>
+            <img
+              src={SubmitImageSrc}
+              alt="Submit"
+              className="submit-image"
+              onClick={handleStaffSelection}
+            />
           </form>
         )}
-        <button onClick={() => navigate('/signup', { state: { key: true } })}>
-          student
-        </button>
+        <img
+          src={myImageSrc}
+          alt="Student"
+          className="user-image"
+          onClick={handleStudentSelection}
+        />
       </div>
     </div>
   );

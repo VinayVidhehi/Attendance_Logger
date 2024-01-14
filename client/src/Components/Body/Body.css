@@ -4,6 +4,8 @@
     justify-content: space-between;
     margin: 20px;
     font-size: 40px;
+    color: #05386b;
+
   }
   
   .text-content {
@@ -11,19 +13,18 @@
     color: #05386b;
     font-size: 20px;
   }
-  body {
-    color: #edf5e1;
-  }
+
+  
   
   div {
-    color: #edf5e1;
+   
     background-color: #5cdb95;
     font-stretch: expanded;
 
   }
   
   h1, h2, h3 {
-    color: #edf5e1;
+    
     margin: 30px;
   }
   h2{
@@ -39,7 +40,7 @@
 ul{
     font-size: 20px;
     margin: 20px;
-    color: #edf5e1;
+    color: #05386b ;
     margin-left: 60px;
 }
 .bouncing-text {
@@ -54,9 +55,9 @@ ul{
     flex-wrap: wrap;
     margin-top: 50px;
     margin-left: 10px;
-    
-
+   
   }
+
   
   @keyframes bounce {
     to {
@@ -65,21 +66,26 @@ ul{
   }
 p{
     margin:10px;
+    color:#05386b; 
 }
-.login_button{
-    margin-top: 45px;
-    padding: 10px 20px;
-    background-color: #05386b;
-    color: #edf5e1;
-    font-size: 16px;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    }
-    
-    .login-button:hover {
-      background-color: #379683;
-    }
+.login{
+  margin-top: 20px;
+  margin-left: 20px;
+}
+.login_button {
+ 
+  padding: 10px 20px;
+  background-color: #05386b;
+  color: #edf5e1;
+  font-size: 16px;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+  
+.login_button:hover {
+  background-color: #379683; /* Adjust the hover color as needed */
+}
 
 section{
     margin: 20px;

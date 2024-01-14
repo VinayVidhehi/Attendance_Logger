@@ -25,7 +25,7 @@ const PerformOCR = () => {
       const usnText = usnMatch ? usnMatch[0] : "No USN found";
 
       // Extract email
-      const emailPattern = /\b[\w.%+-]+@rvce\.edu\.in\b/;
+      const emailPattern = /\b[\w.%+-]+@rvce.edu.in\b/;
       const emailMatch = text.match(emailPattern);
       const emailText = emailMatch ? emailMatch[0] : "No email found";
 
