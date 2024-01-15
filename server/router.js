@@ -323,7 +323,8 @@ const handleUserLogin = async (req, res) => {
 
     if (passwordMatch) {
       // Passwords match, user found
-     if (user.isCounsellor)  res.send({ key: 2, message: "User found" });
+     if (user.isCounsellor)  res.send({ key: 3, message: "User found" });
+     else if (user.isStaff)  res.send({ key: 2, message: "User found" });
      else  res.send({ key: 1, message: "User found" });
     } else {
       // Passwords do not match

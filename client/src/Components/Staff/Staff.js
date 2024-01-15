@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import performOCR from "../Body/OCRUtil";
+
 
 const Staff = () => {
   const [attendanceData, setAttendanceData] = useState({});
   const [students, setStudents] = useState([]);
   const location = useLocation();
   const email = location.state.email;
-
+  const isCounsellor = location.state.key;
+  console.log("isCounsellor", isCounsellor);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -89,6 +92,7 @@ const Staff = () => {
             <p>Loading attendance data...</p>
           )}
         </div>
+        <div>{ isCounsellor===3 ? <performOCR />: {}}</div>
       </div>
     </div>
   );
