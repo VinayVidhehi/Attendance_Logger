@@ -236,7 +236,7 @@ function saveAttendanceToDB(attendanceString) {
 const getAttendance = async (req, res) => {
   const email = req.query.email;
 
-  // Adjust the query to filter by course
+    // Adjust the query to filter by course
   const query = `SELECT * FROM course_attendance;`;
 
   connection.query(query, async (err, results) => {
@@ -306,30 +306,88 @@ const getAttendance = async (req, res) => {
   });
 };
 
+
 const handleUserLogin = async (req, res) => {
   const { email, password } = req.body;
-  console.log("sa", email, password);
-  const response = await User.findOne({ email });
-  console.log(response);
-  if (response.password === password) {
-    res.send({ key: 1, message: "user found" });
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // User not found
+      res.send({ key: 0, message: "User not found" });
+      return;
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (passwordMatch) {
+      // Passwords match, user found
+     if (user.isCounsellor)  res.send({ key: 2, message: "User found" });
+     else  res.send({ key: 1, message: "User found" });
+    } else {
+      // Passwords do not match
+      res.send({ key: 0, message: "Incorrect password" });
+    }
+  } catch (error) {
+    console.log("Error while searching for user:", error.message);
+    res.status(500).send({ key: 0, message: "Internal Server Error" });
   }
 };
 
-const getStaffAttendance = async(req, res) => {
-  const {email} = req.query;
-  
-  const response = await User.findOne({email});
-  console.log("response", response);
+const getStaffAttendance = async (req, res) => {
+  const { email } = req.query;
 
-  if(response.isCounsellor)
-  {
-    console.log("here at response")
-    res.status(200).send({message:"staff found successfully", key:1})
-  } else {
-    res.status(500).send({message: "no user found"});
+  connection.query('SELECT course_id FROM staff WHERE email = ?', [email], (error, courseId) => {
+    if (error) {
+      console.log(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      console.log("course found is ", courseId);
+      const course = "course";
+      const finalCourse = course.concat(courseId[0].course_id);
+      console.log(finalCourse, typeof (finalCourse));
+      const query = `SELECT ${finalCourse}, date FROM course_attendance;`;
+
+      connection.query(query, async (err, results) => {
+        if (err) {
+          console.error("Error fetching attendance from database:", err.message);
+          res.status(500).json({ error: "Internal Server Error" });
+        } else {
+          console.log("Attendance fetched from database:", results);
+
+          // Query the students table to get the id and name of all students
+          const studentsQuery = "SELECT id, name FROM students;";
+
+          connection.query(studentsQuery, (studentsErr, studentsResults) => {
+            if (studentsErr) {
+              console.error("Error fetching student data from database:", studentsErr.message);
+              res.status(500).json({ error: "Internal Server Error" });
+            } else {
+              console.log("Student data fetched from database:", studentsResults);
+              res.status(200).json({key:1, attendance: results, students:studentsResults });
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+
+const getStatusText = (status) => {
+  switch (status) {
+    case "0":
+      return "Absent";
+    case "1":
+      return "Present";
+    case "2":
+      return "Class Not Taken";
+    default:
+      return "Unknown Status";
   }
-}
+};
+
 
 module.exports = {
   handleUserLogin,

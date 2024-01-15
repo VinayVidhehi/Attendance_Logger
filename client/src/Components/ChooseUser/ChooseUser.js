@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "./ChooseUser.css"; // Make sure to import your CSS file
 
 // Import your image
-import yourImageSrc from "/home/spoorthi/Attendance_Logger/client/src/images/STAFF.png"; // Replace with the actual path
-import myImageSrc from "/home/spoorthi/Attendance_Logger/client/src/images/student.png"; // Replace with the actual path
-import SubmitImageSrc from "/home/spoorthi/Attendance_Logger/client/src/images/SUBMIT.png"; // Replace with the actual path
-import  Chooseuser from "/home/spoorthi/Attendance_Logger/client/src/images/Chooseuser.png"; // Replace with the actual path
+import yourImageSrc from "../../images/STAFF.png"; // Replace with the actual path
+import myImageSrc from "../../images/student.png"; // Replace with the actual path
+import SubmitImageSrc from "../../images/SUBMIT.png"; // Replace with the actual path
+import  Chooseuser from "../../images/Chooseuser.png"; // Replace with the actual path
 
 const ChooseUser = () => {
   const [staff, setStaff] = useState(false);
