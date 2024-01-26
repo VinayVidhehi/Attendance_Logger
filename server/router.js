@@ -46,8 +46,6 @@ const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000);
 };
 
-const usersWithOTP = [];
-
 const sendOTPEmail = async (email, otp) => {
   const mailOptions = {
     from: "vinayvidhehi@gmail.com",
@@ -104,7 +102,7 @@ const handleUserSignup = async (req, res) => {
         // Hash the password before storing it
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        const newUser = new User({ email, password: hashedPassword, usn });
+        const newUser = new User({ email, password: hashedPassword, isStaff: false, isCounsellor:false});
         // save all the incoming variables related to the user to students table in MySQL
         await newUser.save();
 
@@ -135,7 +133,7 @@ const handleUserSignup = async (req, res) => {
         await OTPModel.findOneAndDelete({ email });
         res.status(200).send({ message: "User saved successfully", key: 1 });
       } else {
-        const {Name, password, OTP, courseId, batch, email} = req.body;
+        const {Name, password, OTP, courseIdId, batch, email} = req.body;
 
         if (!OTP) {
           throw new Error("OTP is required");
@@ -154,20 +152,21 @@ const handleUserSignup = async (req, res) => {
         const newUser = new User({
           email,
           password: hashedPassword,
+          isStaff: true,
           isCounsellor: true,
         });
         // save all the incoming variables related to the user to students table in MySQL
         await newUser.save();
-        //changing course string to id
-        var course = 0;
-        if(courseId.startsWith("DBS")) {
-          course = 53;
-        } else if(courseId.startsWith("AI")) {
-          course = 52;
+        //changing courseId string to id
+        var courseId = 0;
+        if(courseIdId.startsWith("DBS")) {
+          courseId = 53;
+        } else if(courseIdId.startsWith("AI")) {
+          courseId = 52;
         }  
         const query =
-          "insert into staff(name, email, course_id, counceller_id) values (?, ?, ?, ?)";
-        const values = [Name, email, course, batch];
+          "insert into staff(name, email, courseId_id, counceller_id) values (?, ?, ?, ?)";
+        const values = [Name, email, courseId, batch];
 
         connection.query(query, values, (error, result) => {
           if (error) {
@@ -189,19 +188,24 @@ const handleUserSignup = async (req, res) => {
 };
 
 const attendanceUpdate = async (req, res) => {
-  console.log("Ids of students who are present are ", req.query.id);
+  console.log("Ids of students who are present are ", req.query);
 
   // Save the attendance string to the database
   const attendanceString = req.query.id;
-  saveAttendanceToDB(attendanceString);
+  const courseId = req.query.courseId;
+  saveAttendanceToDB(attendanceString, courseId);
 
   res.json({ message: "Hello, this is your Express server with CORS!\n" });
 };
 
 // Function to save the attendance string to the database
-function saveAttendanceToDB(attendanceString) {
+// Function to save the attendance string to the database
+function saveAttendanceToDB(attendanceString, courseId) {
   // Get the current date in 'YYYY-MM-DD' format
   const currentDate = new Date().toISOString().split("T")[0];
+
+  // Get the current day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+  const currentDay = new Date().getDay();
 
   // Split the incoming comma-separated string into an array of IDs
   const incomingIDs = attendanceString.split(",").map(Number);
@@ -221,10 +225,10 @@ function saveAttendanceToDB(attendanceString) {
   const statusString = status.join("");
   console.log("status string now is", statusString);
 
-  // Assuming you have a table named DBS_Lab_eg with columns 'date' and 'status'
-  const query = "INSERT INTO DBS_Lab (date, status) VALUES (?, ?)";
+  // Assuming you have a table named courseId_attendance with columns 'date', 'day', 'courseId', and 'status'
+  const query = "INSERT INTO courseId_attendance (date, day, ?, status) VALUES (?, ?, ?, ?)";
 
-  connection.query(query, [currentDate, statusString], (err, results) => {
+  connection.query(query, [courseId, currentDate, currentDay, statusString], (err, results) => {
     if (err) {
       console.error("Error saving attendance to database:", err.message);
     } else {
@@ -236,8 +240,8 @@ function saveAttendanceToDB(attendanceString) {
 const getAttendance = async (req, res) => {
   const email = req.query.email;
 
-    // Adjust the query to filter by course
-  const query = `SELECT * FROM course_attendance;`;
+    // Adjust the query to filter by courseId
+  const query = `SELECT * FROM courseId_attendance;`;
 
   connection.query(query, async (err, results) => {
     if (err) {
@@ -267,12 +271,12 @@ const getAttendance = async (req, res) => {
             // Process attendance data to calculate attendance status and percentage
             const attendanceData = results.map((entry) => {
               const totalDays = Object.keys(entry).filter((key) =>
-                key.startsWith("course")
+                key.startsWith("courseId")
               ).length;
               let presentDays = 0;
 
               for (let i = 52; i <= 53; i++) {
-                const statusChar = entry[`course${i}`][studentID - 1];
+                const statusChar = entry[`courseId${i}`][studentID - 1];
                 const statusBool = statusChar === "1";
 
                 if (statusBool) {
@@ -339,16 +343,16 @@ const handleUserLogin = async (req, res) => {
 const getStaffAttendance = async (req, res) => {
   const { email } = req.query;
 
-  connection.query('SELECT course_id FROM staff WHERE email = ?', [email], (error, courseId) => {
+  connection.query('SELECT courseId_id FROM staff WHERE email = ?', [email], (error, courseIdId) => {
     if (error) {
       console.log(error);
       res.status(500).json({ error: "Internal Server Error" });
     } else {
-      console.log("course found is ", courseId);
-      const course = "course";
-      const finalCourse = course.concat(courseId[0].course_id);
-      console.log(finalCourse, typeof (finalCourse));
-      const query = `SELECT ${finalCourse}, date FROM course_attendance;`;
+      console.log("courseId found is ", courseIdId);
+      const courseId = "courseId";
+      const finalCourseId = courseId.concat(courseIdId[0].courseId_id);
+      console.log(finalCourseId, typeof (finalCourseId));
+      const query = `SELECT ${finalCourseId}, date FROM courseId_attendance;`;
 
       connection.query(query, async (err, results) => {
         if (err) {

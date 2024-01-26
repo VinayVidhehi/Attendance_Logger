@@ -16,12 +16,12 @@ const Signup = () => {
     "Enter the correct credentials to sign up"
   );
   const [courseId, setCourseId] = useState("");
+  const [isStudent, setIsStudent] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   console.log("the location is ", location.state.key);
-  const isStudent = location.state.key;
 
   const courses = ["AI & ML", "DBS"];
   const counsellors = ["Padmashree", "Sagar", "Srinivas"]; // Add your list of counsellors here
@@ -30,6 +30,9 @@ const Signup = () => {
   const handleSignUp = async (event) => {
     event.preventDefault();
     setMessages("Loading...");
+
+    if(email.endsWith('.is21@rvce.edu.in') || email.endsWith('.is22@rvce.edu.in')) setIsStudent(true);
+    else setIsStudent(false);
 
     if (!authenticated) {
       try {
@@ -51,7 +54,7 @@ const Signup = () => {
         console.log("Error while signing up: ", error.message);
       }
     } else {
-      if (location.state.key) {
+      if (isStudent) {
         try {
           const response = await axios.post("http://localhost:7800/signup", {
             email,
@@ -99,8 +102,7 @@ const Signup = () => {
   return (
     <div className="login-main-container">
       <div className="login-hero">
-        {isStudent && <h2>Sign up </h2>}
-        {!isStudent && <h2>Sign up for Staff</h2>}
+        Signup for AMS
         <h4>{messages}</h4>
         <form onSubmit={handleSignUp}>
           {/* Your form inputs go here */}

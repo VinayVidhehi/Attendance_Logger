@@ -36,7 +36,7 @@ function runQuery() {
 
   const values = [2, '2222222222222222222222222222222222222222222111101111001111101101111011', '0111111101011111111111101101111111110010111222222222222222222222222222', '2024-01-11', 'friday'];
 
-  connection.query('desc Leave_Log', values, (error, result) => {
+  connection.query('select * from course_attendance', values, (error, result) => {
     if (error) {
       console.log("Error: ", error.message);
     } else {
