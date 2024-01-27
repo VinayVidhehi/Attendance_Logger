@@ -25,7 +25,7 @@ const Body = () => {
   const handleViewAttendance = () => {
     console.log("view attendance button clicked");
     setAttendancekey(!attendancekey);
-    if (buttonmessage == "close") setButtonmessage("view attendance");
+    if (buttonmessage === "close") setButtonmessage("view attendance");
     else setButtonmessage("close");
   };
 

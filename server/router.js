@@ -241,7 +241,7 @@ const getAttendance = async (req, res) => {
   const email = req.query.email;
 
     // Adjust the query to filter by courseId
-  const query = `SELECT * FROM courseId_attendance;`;
+  const query = `SELECT * FROM course_attendance;`;
 
   connection.query(query, async (err, results) => {
     if (err) {
@@ -268,15 +268,17 @@ const getAttendance = async (req, res) => {
             const studentID =
               studentsResults.length > 0 ? studentsResults[0].id : null;
 
+              console.log("result is ", studentsResults)
             // Process attendance data to calculate attendance status and percentage
             const attendanceData = results.map((entry) => {
               const totalDays = Object.keys(entry).filter((key) =>
                 key.startsWith("courseId")
               ).length;
               let presentDays = 0;
-
+              
+              console.log("entry is ", entry[2]);
               for (let i = 52; i <= 53; i++) {
-                const statusChar = entry[`courseId${i}`][studentID - 1];
+                const statusChar = entry[`course${i}`][studentID - 1];
                 const statusBool = statusChar === "1";
 
                 if (statusBool) {

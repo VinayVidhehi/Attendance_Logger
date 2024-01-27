@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Signup.css";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 const Signup = () => {
@@ -19,9 +19,6 @@ const Signup = () => {
   const [isStudent, setIsStudent] = useState(true);
 
   const navigate = useNavigate();
-  const location = useLocation();
-
-  console.log("the location is ", location.state.key);
 
   const courses = ["AI & ML", "DBS"];
   const counsellors = ["Padmashree", "Sagar", "Srinivas"]; // Add your list of counsellors here
