@@ -345,16 +345,16 @@ const handleUserLogin = async (req, res) => {
 const getStaffAttendance = async (req, res) => {
   const { email } = req.query;
 
-  connection.query('SELECT courseId_id FROM staff WHERE email = ?', [email], (error, courseIdId) => {
+  connection.query('SELECT course_id FROM staff WHERE email = ?', [email], (error, courseIdId) => {
     if (error) {
       console.log(error);
       res.status(500).json({ error: "Internal Server Error" });
     } else {
       console.log("courseId found is ", courseIdId);
-      const courseId = "courseId";
-      const finalCourseId = courseId.concat(courseIdId[0].courseId_id);
+      const courseId = "course";
+      const finalCourseId = courseId.concat(courseIdId[0].course_id);
       console.log(finalCourseId, typeof (finalCourseId));
-      const query = `SELECT ${finalCourseId}, date FROM courseId_attendance;`;
+      const query = `SELECT ${finalCourseId}, date FROM course_attendance;`;
 
       connection.query(query, async (err, results) => {
         if (err) {
