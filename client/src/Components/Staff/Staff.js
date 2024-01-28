@@ -72,13 +72,13 @@ const Staff = () => {
                     <td>{student.name}</td>
                     {attendanceData.map((entry, entryIndex) => (
                       <td key={entryIndex}>
-                        {entry.course53[studentIndex] === "2" &&
+                        {entry.course52[studentIndex] === "2" &&
                           "Class Not Taken"}
-                        {entry.course53[studentIndex] === "0" && "Absent"}
-                        {entry.course53[studentIndex] === "1" && "Present"}
+                        {entry.course52[studentIndex] === "0" && "Absent"}
+                        {entry.course52[studentIndex] === "1" && "Present"}
                         {/* Add a default case */}
                         {["0", "1", "2"].indexOf(
-                          entry.course53[studentIndex]
+                          entry.course52[studentIndex]
                         ) === -1 && "Unknown"}
                       </td>
                     ))}

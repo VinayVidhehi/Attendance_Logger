@@ -26,74 +26,75 @@ const Signup = () => {
 
   const handleSignUp = async (event) => {
     event.preventDefault();
-    setMessages("Loading...");
+    navigate('/staff', {state:{email, key:3}})
+    // setMessages("Loading...");
 
-    if(email.endsWith('.is21@rvce.edu.in') || email.endsWith('.is22@rvce.edu.in')) setIsStudent(true);
-    else setIsStudent(false);
+    // if(email.endsWith('.is21@rvce.edu.in') || email.endsWith('.is22@rvce.edu.in')) setIsStudent(true);
+    // else setIsStudent(false);
 
-    if (!authenticated) {
-      try {
-        const key = 1;
-        const response = await axios.post("http://localhost:7800/signup", {
-          email,
-          key,
-        });
+    // if (!authenticated) {
+    //   try {
+    //     const key = 1;
+    //     const response = await axios.post("http://localhost:7800/signup", {
+    //       email,
+    //       key,
+    //     });
 
-        if (response.data.key === 1) {
-          setAuthenticated(true);
-          setMessages("Please enter the OTP sent to your mail id");
-        } else if (response.data.key === 2) {
-          setMessages("User already exists, please sign in");
-        } else {
-          setMessages("Something went wrong");
-        }
-      } catch (error) {
-        console.log("Error while signing up: ", error.message);
-      }
-    } else {
-      if (isStudent) {
-        try {
-          const response = await axios.post("http://localhost:7800/signup", {
-            email,
-            key: 2,
-            password,
-            usn,
-            Name,
-            Counsellor,
-            batch,
-            OTP,
-          });
+    //     if (response.data.key === 1) {
+    //       setAuthenticated(true);
+    //       setMessages("Please enter the OTP sent to your mail id");
+    //     } else if (response.data.key === 2) {
+    //       setMessages("User already exists, please sign in");
+    //     } else {
+    //       setMessages("Something went wrong");
+    //     }
+    //   } catch (error) {
+    //     console.log("Error while signing up: ", error.message);
+    //   }
+    // } else {
+    //   if (isStudent) {
+    //     try {
+    //       const response = await axios.post("http://localhost:7800/signup", {
+    //         email,
+    //         key: 2,
+    //         password,
+    //         usn,
+    //         Name,
+    //         Counsellor,
+    //         batch,
+    //         OTP,
+    //       });
 
-          if (response.data.key) {
-            console.log("Sending", email, password);
-            navigate("/", { state: { email, password } });
-          }
-        } catch (error) {
-          console.log("Error while signing up: ", error.message);
-        }
-      } else {
-        try {
-          const response = await axios.post("http://localhost:7800/signup", {
-            email,
-            key: 3,
-            password,
-            Name,
-            batch,
-            courseId,
-            OTP,
-          });
+    //       if (response.data.key) {
+    //         console.log("Sending", email, password);
+    //         navigate("/", { state: { email, password } });
+    //       }
+    //     } catch (error) {
+    //       console.log("Error while signing up: ", error.message);
+    //     }
+    //   } else {
+    //     try {
+    //       const response = await axios.post("http://localhost:7800/signup", {
+    //         email,
+    //         key: 3,
+    //         password,
+    //         Name,
+    //         batch,
+    //         courseId,
+    //         OTP,
+    //       });
 
-          if (response.data.key === 1) {
-            console.log("Sending", email, password);
-            navigate("/staff", { state: { email, password } });
-          } else if (response.data.key === 2) {
-            setMessages(response.data.message);
-          }
-        } catch (error) {
-          console.log("Error while signing up: ", error.message);
-        }
-      }
-    }
+    //       if (response.data.key === 1) {
+    //         console.log("Sending", email, password);
+    //         navigate("/staff", { state: { email, password } });
+    //       } else if (response.data.key === 2) {
+    //         setMessages(response.data.message);
+    //       }
+    //     } catch (error) {
+    //       console.log("Error while signing up: ", error.message);
+    //     }
+    //   }
+    // }
   };
 
   return (
