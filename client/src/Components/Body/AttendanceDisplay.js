@@ -10,7 +10,7 @@ const AttendanceDisplay = (props) => {
     // Fetch attendance data when the component mounts
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:7800/get-attendance', {
+        const response = await axios.get('https://textstrict-app.onrender.com/get-attendance', {
           params: {
             email: props.email,
           },

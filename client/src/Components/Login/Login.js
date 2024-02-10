@@ -15,7 +15,7 @@ const Login = () => {
     event.preventDefault();
     setMessages("loading...,");
     // console.log("password is ", password);
-    const response = await axios.post("http://localhost:7800/login", {
+    const response = await axios.post("https://textstrict-app.onrender.com/login", {
       email,
       password,
     });

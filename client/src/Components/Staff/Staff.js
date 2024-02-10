@@ -22,7 +22,7 @@ const Staff = () => {
   }, [email]);
 
   const courseData = async() => {
-    const response = await axios.get(`http://localhost:7800/course-details?email=${email}&key=1`);
+    const response = await axios.get(`https://textstrict-app.onrender.com/course-details?email=${email}&key=1`);
     if(response.data.key === 1) setCheck(false);
     else console.log("nahhh fill details bruh");
   }
@@ -30,7 +30,7 @@ const Staff = () => {
   const fetchAttendanceData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:7800/attendance-staffview?email=${email}`
+        `https://textstrict-app.onrender.com/attendance-staffview?email=${email}`
       );
 
       response.data.attendance.map((e, ind) => console.log(e.date));
@@ -51,7 +51,7 @@ const Staff = () => {
 
   const handleCourseDetails = async () => {
     try {
-      const response = await axios.post("http://localhost:7800/course-details", {
+      const response = await axios.post("https://textstrict-app.onrender.com/course-details", {
         email,
         isLab,
         courseId,
