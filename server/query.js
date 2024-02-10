@@ -30,19 +30,40 @@ connection.connect((err) => {
 });
 
 function runQuery() {
-  const dynamicSQL = `
-    INSERT INTO course_attendance (id, course52, course53, date, day) VALUES (?, ?, ?, ?, ?);
+  const courseId = "21CS53";
+  const email = "vinayvidhehi@gmail.com";
+  const counsellor = 1;
+  const query = `
+    UPDATE staff
+    SET 
+      course_id = ?,
+      counsellor_number = ?
+    WHERE
+      staff_email = ?
   `;
 
-  const values = ['Spoorthi','spoorthivarumbudi@gmail.com',1,52];
+//   const values = [courseId, counsellor, email];
+//   connection.query(
+//     'select * from staff', values, (error, result) => {
+//     if (error) {
+//       console.log("Error: ", error.message);
+//     } else {
+//       console.log("Result: ", result);
+//     }
+//   });
+// }
 
-  connection.query('select * from course_attendance', (error, result) => {
+let id = 0;
+connection.query(
+  "desc students",
+  (error, result) => {
     if (error) {
-      console.log("Error: ", error.message);
+      console.log(error);
     } else {
-      console.log("Result: ", result);
+      console.log(result);
     }
-  });
+  }
+);
 }
 
 runQuery();
@@ -52,3 +73,4 @@ app.listen(PORT, () => {
 });
 
 //0111111101011111111111101101111111110010111222222222222222222222222222
+//CREATE TABLE staff ( staff_id int PRIMARY KEY, staff_name VARCHAR(100), staff_email varchar(100), course_id varchar(10), counsellor_number int);

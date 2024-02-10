@@ -7,6 +7,7 @@ import Login from './Components/Login/Login';
 import Staff from './Components/Staff/Staff';
 
 import { Routes, Route } from 'react-router-dom';
+import PerformOCR from './Components/Body/OCR';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path='/signup' element={<Signup />} />
         <Route path='/' element={<Body />} />
         <Route path='/staff' element={<Staff />} />
+        <Route path='/OCR' element={<PerformOCR/>} />
       </Routes>
       <Footer />
     </div>

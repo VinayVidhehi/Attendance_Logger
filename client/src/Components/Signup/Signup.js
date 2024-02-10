@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Signup.css";
 import { Link, useNavigate} from "react-router-dom";
 import axios from "axios";
@@ -10,8 +10,10 @@ const Signup = () => {
   const [OTP, setOTP] = useState(null);
   const [Name, setName] = useState("");
   const [batch, setBatch] = useState("");
+ // const [batches, setBatches] = useState("");
   const [Counsellor, setCounsellor] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
+  const [counsellors, setCounsellors] = useState([]);
   const [messages, setMessages] = useState(
     "Enter the correct credentials to sign up"
   );
@@ -20,81 +22,93 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const courses = ["AI & ML", "DBS"];
-  const counsellors = ["Padmashree", "Sagar", "Srinivas"]; // Add your list of counsellors here
-  const labs = ["1", "2", "3"]; // Updated list of labs
+  const batches = [1,2,3];
+
+  useEffect(()=> {
+    handleLoadFormData();
+  }, [isStudent]);
+
+  const handleLoadFormData = async() => {
+     const response = await axios.get('http://localhost:7800/course-details');
+     if (response.data.key === 0) {
+      console.log("unknown error server down");
+      setMessages("please try again later");
+     } else {
+          const courseDetails = response.data.staffDetails[0];
+          console.log(courseDetails);
+          //setCourses(courseDetails)
+     }
+  }
 
   const handleSignUp = async (event) => {
     event.preventDefault();
-    navigate('/staff', {state:{email, key:3}})
-    // setMessages("Loading...");
+    //navigate('/staff', {state:{email, key:3}})
+    setMessages("Loading...");
 
-    // if(email.endsWith('.is21@rvce.edu.in') || email.endsWith('.is22@rvce.edu.in')) setIsStudent(true);
-    // else setIsStudent(false);
+    if(email.endsWith('.is21@rvce.edu.in') || email.endsWith('.is22@rvce.edu.in')) setIsStudent(true);
+    else setIsStudent(false);
 
-    // if (!authenticated) {
-    //   try {
-    //     const key = 1;
-    //     const response = await axios.post("http://localhost:7800/signup", {
-    //       email,
-    //       key,
-    //     });
+    if (!authenticated) {
+      try {
+        const key = 1;
+        const response = await axios.post("http://localhost:7800/signup", {
+          email,
+          key,
+        });
 
-    //     if (response.data.key === 1) {
-    //       setAuthenticated(true);
-    //       setMessages("Please enter the OTP sent to your mail id");
-    //     } else if (response.data.key === 2) {
-    //       setMessages("User already exists, please sign in");
-    //     } else {
-    //       setMessages("Something went wrong");
-    //     }
-    //   } catch (error) {
-    //     console.log("Error while signing up: ", error.message);
-    //   }
-    // } else {
-    //   if (isStudent) {
-    //     try {
-    //       const response = await axios.post("http://localhost:7800/signup", {
-    //         email,
-    //         key: 2,
-    //         password,
-    //         usn,
-    //         Name,
-    //         Counsellor,
-    //         batch,
-    //         OTP,
-    //       });
+        if (response.data.key === 1) {
+          setAuthenticated(true);
+          setMessages("Please enter the OTP sent to your mail id");
+        } else if (response.data.key === 2) {
+          setMessages("User already exists, please sign in");
+        } else {
+          setMessages("Something went wrong");
+        }
+      } catch (error) {
+        console.log("Error while signing up: ", error.message);
+      }
+    } else {
+      if (isStudent) {
+        try {
+          const response = await axios.post("http://localhost:7800/signup", {
+            email,
+            key: 2,
+            password,
+            usn,
+            Name,
+            Counsellor,
+            batch,
+            OTP,
+          });
 
-    //       if (response.data.key) {
-    //         console.log("Sending", email, password);
-    //         navigate("/", { state: { email, password } });
-    //       }
-    //     } catch (error) {
-    //       console.log("Error while signing up: ", error.message);
-    //     }
-    //   } else {
-    //     try {
-    //       const response = await axios.post("http://localhost:7800/signup", {
-    //         email,
-    //         key: 3,
-    //         password,
-    //         Name,
-    //         batch,
-    //         courseId,
-    //         OTP,
-    //       });
+          if (response.data.key) {
+            console.log("Sending", email, password);
+            navigate("/", { state: { email, password } });
+          }
+        } catch (error) {
+          console.log("Error while signing up: ", error.message);
+        }
+      } else {
+        try {
+          const response = await axios.post("http://localhost:7800/signup", {
+            email,
+            key: 3,
+            password,
+            Name,
+            OTP,
+          });
 
-    //       if (response.data.key === 1) {
-    //         console.log("Sending", email, password);
-    //         navigate("/staff", { state: { email, password } });
-    //       } else if (response.data.key === 2) {
-    //         setMessages(response.data.message);
-    //       }
-    //     } catch (error) {
-    //       console.log("Error while signing up: ", error.message);
-    //     }
-    //   }
-    // }
+          if (response.data.key === 1) {
+            console.log("Sending", email, password);
+            navigate("/staff", { state: { email} });
+          } else if (response.data.key === 2) {
+            setMessages(response.data.message);
+          }
+        } catch (error) {
+          console.log("Error while signing up: ", error.message);
+        }
+      }
+    }
   };
 
   return (
@@ -147,14 +161,9 @@ const Signup = () => {
             <select value={batch} onChange={(e) => setBatch(e.target.value)}>
               <option value="" disabled>
                 {isStudent && <h3>Select </h3>}
-                {!isStudent && (
-                  <h3>
-                    if you are the counsellor, then select the batch for which
-                    you are counsellor for. Skip otherwise
-                  </h3>
-                )}
+                
               </option>
-              {labs.map((lab, index) => (
+              {batches.map((lab, index) => (
                 <option key={index} value={lab}>
                   {lab}
                 </option>
@@ -176,22 +185,6 @@ const Signup = () => {
                 </option>
               ))}
             </select>
-          )}
-
-          {authenticated && !isStudent && (
-            <div>
-              <h3>what course do you handle</h3>
-              <select
-                value={courseId}
-                onChange={(e) => setCourseId(e.target.value)}
-              >
-                {courses.map((courseId, index) => (
-                  <option key={index} value={courseId}>
-                    {courseId}
-                  </option>
-                ))}
-              </select>
-            </div>
           )}
 
           <input type="submit" value="Sign up" className="submit" />

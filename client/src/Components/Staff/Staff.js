@@ -1,98 +1,110 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import performOCR from "../Body/OCRUtil";
-
 
 const Staff = () => {
   const [attendanceData, setAttendanceData] = useState({});
   const [students, setStudents] = useState([]);
+  const [isLab, setIsLab] = useState(false);
+  const [courseId, setCourseId] = useState("");
+  const [counsellor, setCounsellor] = useState(0);
+  const [courseName, setCourseName] = useState("");
+  const [credits, setCredits] = useState(1);
+
   const location = useLocation();
   const email = location.state.email;
-  const isCounsellor = location.state.key;
-  console.log("isCounsellor", isCounsellor);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:7800/attendance-staffview?email=${email}`
-        );
-        console.log("response is", response.data.students);
+  console.log("email is ",email);
 
-        response.data.attendance.map((e, ind) => console.log(e.date));
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:7800/attendance-staffview?email=${email}`
+  //       );
 
-        if (response.data.key === 1) {
-          console.log("am i here");
-          setAttendanceData(response.data.attendance);
-          setStudents(response.data.students);
-        } else {
-          console.log(
-            "Invalid response structure or key value:",
-            response.data
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching attendance staff view:", error.message);
-      }
-    };
+  //       response.data.attendance.map((e, ind) => console.log(e.date));
 
-    fetchData();
-  }, [email]);
+  //       if (response.data.key === 1) {
+  //         setAttendanceData(response.data.attendance);
+  //         setStudents(response.data.students);
+  //       } else {
+  //         console.log(
+  //           "Invalid response structure or key value:",
+  //           response.data
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching attendance staff view:", error.message);
+  //     }
+  //   };
 
-  console.log("attttttttttttttttendance data", attendanceData);
-  if (attendanceData.length > 0) {
-    attendanceData.map((val, ind) => {
-      console.log("each date is", val.date);
-    });
-  }
+  //   fetchData();
+  // }, [email]);
+
+  const handleCourseDetails = async () => {
+    try {
+      const response = await axios.post("http://localhost:7800/course-details", {
+        email,
+        isLab,
+        courseId,
+        counsellor,
+        courseName,
+        credits
+      });
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error updating course details:", error.message);
+    }
+  };
 
   return (
     <div>
       <div>
         <h2>Welcome to AMS</h2>
-      </div>
-      <div>
-        <div>
-          <h2>big HEADACHE</h2>
-          {attendanceData.length > 0 && students.length > 0 && (
-            <table border="1">
-              <thead>
-                <tr>
-                  <th>Student Name</th>
-                  {attendanceData.length > 0 &&
-                    attendanceData.map((val, index) => (
-                      <th key={index}>{val.date}</th>
-                    ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {students.map((student, studentIndex) => (
-                  <tr key={studentIndex}>
-                    <td>{student.name}</td>
-                    {attendanceData.map((entry, entryIndex) => (
-                      <td key={entryIndex}>
-                        {entry.course52[studentIndex] === "2" &&
-                          "Class Not Taken"}
-                        {entry.course52[studentIndex] === "0" && "Absent"}
-                        {entry.course52[studentIndex] === "1" && "Present"}
-                        {/* Add a default case */}
-                        {["0", "1", "2"].indexOf(
-                          entry.course52[studentIndex]
-                        ) === -1 && "Unknown"}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-          {/* Add a placeholder if the data is not loaded yet */}
-          {(attendanceData.length === 0 || students.length === 0) && (
-            <p>Loading attendance data...</p>
-          )}
-        </div>
-        <div>{ isCounsellor===3 ? <performOCR />: {}}</div>
+        <h3>Update course details here</h3>
+        <form onSubmit={handleCourseDetails}>
+          <div>
+            <label>Does this course contains Laboratory?</label>
+            <input
+              type="checkbox"
+              checked={isLab}
+              onChange={(e) => setIsLab(e.target.checked)}
+            />
+          </div>
+          <div>
+            <label>Enter the course ID</label>
+            <input
+              type="text"
+              value={courseId}
+              onChange={(e) => setCourseId(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Course Name:</label>
+            <input
+              type="text"
+              value={courseName}
+              onChange={(e) => setCourseName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Are you a counsellor, if yes then enter the batch for which you are a counsellor for. If not then let that be zero</label>
+            <input
+              type="number"
+              value={counsellor}
+              onChange={(e) => setCounsellor(parseInt(e.target.value))}
+            />
+          </div>
+          <div>
+            <label>total number of credits this course holds is</label>
+            <input
+              type="number"
+              value={credits}
+              onChange={(e) => setCredits(parseInt(e.target.value))}
+            />
+          </div>
+          <button type="submit">Update Course Details</button>
+        </form>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ const User = require("./models/user_schema");
 const OTPModel = require("./models/otp_schema");
 const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 
 const connection = mysql.createConnection({
@@ -72,114 +72,122 @@ const handleUserSignup = async (req, res) => {
     }
 
     if (key == 1) {
-      // Handle OTP generation and email sending
+      const user = await User.findOne({ email });
+      if (user) {
+        // If user already exists, send a response indicating that
+        return res.send({
+          message: "User already exists. Please sign in instead",
+          key: 0,
+        });
+      }
+
       const generatedOTP = generateOTP();
-
-      // Save OTP to MongoDB
       await OTPModel.create({ email, otp: generatedOTP });
-
       await sendOTPEmail(email, generatedOTP);
 
-      res
+      return res
         .status(200)
         .send({ message: "OTP sent to your email successfully", key: 1 });
-    } else {
-      if (key == 2) {
-        const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
+    } else if (key == 2) {
+      const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
 
-        // Handle user registration and OTP validation
-        if (!OTP) {
-          throw new Error("OTP is required");
-        }
-
-        // Find the OTP in MongoDB
-        const foundOTP = await OTPModel.findOne({ email });
-
-        if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
-          throw new Error("Entered OTP doesn't match. Try again later.");
-        }
-
-        // Hash the password before storing it
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        const newUser = new User({ email, password: hashedPassword, isStaff: false, isCounsellor:false});
-        // save all the incoming variables related to the user to students table in MySQL
-        await newUser.save();
-
-        var counsellorNumber;
-
-        if (Counsellor.startsWith("P")) {
-          counsellorNumber = 1;
-        } else if (Counsellor.startsWith("Sa")) {
-          counsellorNumber = 2;
-        } else {
-          counsellorNumber = 3;
-        }
-
-        const id = parseInt(usn.substring(usn.length - 3), 10);
-        const query =
-          "insert into students(id, name, usn, email, lab, counsellor) values (?, ?, ?, ?, ?, ?)";
-        const values = [id, Name, usn, email, batch, counsellorNumber];
-
-        connection.query(query, values, (error, result) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(result);
-          }
-        });
-
-        // Complete this to save users in students table;
-        await OTPModel.findOneAndDelete({ email });
-        res.status(200).send({ message: "User saved successfully", key: 1 });
-      } else {
-        const {Name, password, OTP, courseIdId, batch, email} = req.body;
-
-        if (!OTP) {
-          throw new Error("OTP is required");
-        }
-
-        // Find the OTP in MongoDB
-        const foundOTP = await OTPModel.findOne({ email });
-
-        if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
-          res.send({message:"entered OTP doesnt match, try again", key:2})
-        }
-
-        // Hash the password before storing it
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        const newUser = new User({
-          email,
-          password: hashedPassword,
-          isStaff: true,
-          isCounsellor: true,
-        });
-        // save all the incoming variables related to the user to students table in MySQL
-        await newUser.save();
-        //changing courseId string to id
-        var courseId = 0;
-        if(courseIdId.startsWith("DBS")) {
-          courseId = 53;
-        } else if(courseIdId.startsWith("AI")) {
-          courseId = 52;
-        }  
-        const query =
-          "insert into staff(name, email, courseId_id, counceller_id) values (?, ?, ?, ?)";
-        const values = [Name, email, courseId, batch];
-
-        connection.query(query, values, (error, result) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(result);
-          }
-        });
-
-        // Complete this to save users in students table;
-        await OTPModel.findOneAndDelete({ email });
-        res.status(200).send({ message: "User saved successfully", key: 1 });
+      // Handle user registration and OTP validation
+      if (!OTP) {
+        throw new Error("OTP is required");
       }
+
+      // Find the OTP in MongoDB
+      const foundOTP = await OTPModel.findOne({ email });
+
+      if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
+        throw new Error("Entered OTP doesn't match. Try again later.");
+      }
+
+      // Hash the password before storing it
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      const newUser = new User({
+        email,
+        password: hashedPassword,
+        isStaff: false,
+        isCounsellor: false,
+      });
+      // save all the incoming variables related to the user to students table in MySQL
+      await newUser.save();
+
+      const id = parseInt(usn.substring(usn.length - 3), 10);
+      const query =
+        "insert into students(id, name, usn, email, lab, counsellor) values (?, ?, ?, ?, ?, ?)";
+      const values = [id, Name, usn, email, batch, counsellorNumber];
+
+      connection.query(query, values, (error, result) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(result);
+        }
+      });
+
+      // Complete this to save users in students table;
+      await OTPModel.findOneAndDelete({ email });
+      res.status(200).send({ message: "User saved successfully", key: 1 });
+    } else {
+      const { Name, password, OTP, email } = req.body;
+
+      if (!OTP) {
+        throw new Error("OTP is required");
+      }
+
+      // Find the OTP in MongoDB
+      const foundOTP = await OTPModel.findOne({ email });
+      
+      console.log("OTP is ", foundOTP, OTP, " also their types are", typeof(foundOTP), typeof(OTP))
+      if (!foundOTP || JSON.stringify(foundOTP.otp) !== OTP) {
+        return res.send({ message: "entered OTP doesnt match, try again", key: 2 });
+      }
+
+      // Hash the password before storing it
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      const newUser = new User({
+        email,
+        password: hashedPassword,
+        isStaff: true,
+        isCounsellor: false,
+      });
+      // save all the incoming variables related to the user to students table in MySQL
+      await newUser.save();
+
+      let id = 0;
+      connection.query(
+        "select count(staff_id) as count from staff",
+        (error, result) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(result);
+            id = result[0].count;
+            console.log("id is",id)
+          }
+        }
+      );
+
+      const query =
+        "insert into staff(staff_name, staff_email, staff_id) values (?, ?, ?)";
+      console.log("the id is ss", id);
+      const values = [Name, email, id];
+
+      connection.query(query, values, (error, result) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(result);
+        }
+      });
+
+      // Complete this to save users in students table;
+      await OTPModel.findOneAndDelete({ email });
+      res.status(200).send({ message: "User saved successfully", key: 1 });
     }
   } catch (error) {
     console.error("Error during user signup:", error);
@@ -193,15 +201,7 @@ const attendanceUpdate = async (req, res) => {
   // Save the attendance string to the database
   const attendanceString = req.query.id;
   const courseId = req.query.courseId;
-  saveAttendanceToDB(attendanceString, courseId);
-
-  res.json({ message: "Hello, this is your Express server with CORS!\n" });
-};
-
-// Function to save the attendance string to the database
-// Function to save the attendance string to the database
-function saveAttendanceToDB(attendanceString, courseId) {
-  // Get the current date in 'YYYY-MM-DD' format
+  //saveAttendanceToDB(attendanceString, courseId);
   const currentDate = new Date().toISOString().split("T")[0];
 
   // Get the current day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
@@ -226,21 +226,28 @@ function saveAttendanceToDB(attendanceString, courseId) {
   console.log("status string now is", statusString);
 
   // Assuming you have a table named courseId_attendance with columns 'date', 'day', 'courseId', and 'status'
-  const query = "INSERT INTO courseId_attendance (date, day, ?, status) VALUES (?, ?, ?, ?)";
+  const query =
+    "INSERT INTO courseId_attendance (date, day, ?, status) VALUES (?, ?, ?, ?)";
 
-  connection.query(query, [courseId, currentDate, currentDay, statusString], (err, results) => {
-    if (err) {
-      console.error("Error saving attendance to database:", err.message);
-    } else {
-      console.log("Attendance saved to database.", results);
+  connection.query(
+    query,
+    [courseId, currentDate, currentDay, statusString],
+    (err, results) => {
+      if (err) {
+        console.error("Error saving attendance to database:", err.message);
+      } else {
+        console.log("Attendance saved to database.", results);
+      }
     }
-  });
-}
+  );
+
+  res.json({ message: "Hello, this is your Express server with CORS!\n" });
+};
 
 const getAttendance = async (req, res) => {
   const email = req.query.email;
 
-    // Adjust the query to filter by courseId
+  // Adjust the query to filter by courseId
   const query = `SELECT * FROM course_attendance;`;
 
   connection.query(query, async (err, results) => {
@@ -268,14 +275,14 @@ const getAttendance = async (req, res) => {
             const studentID =
               studentsResults.length > 0 ? studentsResults[0].id : null;
 
-              console.log("result is ", studentsResults)
+            console.log("result is ", studentsResults);
             // Process attendance data to calculate attendance status and percentage
             const attendanceData = results.map((entry) => {
               const totalDays = Object.keys(entry).filter((key) =>
                 key.startsWith("courseId")
               ).length;
               let presentDays = 0;
-              
+
               console.log("entry is ", entry[2]);
               for (let i = 52; i <= 53; i++) {
                 const statusChar = entry[`course${i}`][studentID - 1];
@@ -312,7 +319,6 @@ const getAttendance = async (req, res) => {
   });
 };
 
-
 const handleUserLogin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -329,9 +335,9 @@ const handleUserLogin = async (req, res) => {
 
     if (passwordMatch) {
       // Passwords match, user found
-     if (user.isCounsellor)  res.send({ key: 3, message: "User found" });
-     else if (user.isStaff)  res.send({ key: 2, message: "User found" });
-     else  res.send({ key: 1, message: "User found" });
+      if (user.isCounsellor) res.send({ key: 3, message: "User found" });
+      else if (user.isStaff) res.send({ key: 2, message: "User found" });
+      else res.send({ key: 1, message: "User found" });
     } else {
       // Passwords do not match
       res.send({ key: 0, message: "Incorrect password" });
@@ -345,42 +351,60 @@ const handleUserLogin = async (req, res) => {
 const getStaffAttendance = async (req, res) => {
   const { email } = req.query;
 
-  connection.query('SELECT course_id FROM staff WHERE email = ?', [email], (error, courseIdId) => {
-    if (error) {
-      console.log(error);
-      res.status(500).json({ error: "Internal Server Error" });
-    } else {
-      console.log("courseId found is ", courseIdId);
-      const courseId = "course";
-      const finalCourseId = courseId.concat(courseIdId[0].course_id);
-      console.log(finalCourseId, typeof (finalCourseId));
-      const query = `SELECT ${finalCourseId}, date FROM course_attendance;`;
+  connection.query(
+    "SELECT course_id FROM staff WHERE email = ?",
+    [email],
+    (error, courseIdId) => {
+      if (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        console.log("courseId found is ", courseIdId);
+        const courseId = "course";
+        const finalCourseId = courseId.concat(courseIdId[0].course_id);
+        console.log(finalCourseId, typeof finalCourseId);
+        const query = `SELECT ${finalCourseId}, date FROM course_attendance;`;
 
-      connection.query(query, async (err, results) => {
-        if (err) {
-          console.error("Error fetching attendance from database:", err.message);
-          res.status(500).json({ error: "Internal Server Error" });
-        } else {
-          console.log("Attendance fetched from database:", results);
+        connection.query(query, async (err, results) => {
+          if (err) {
+            console.error(
+              "Error fetching attendance from database:",
+              err.message
+            );
+            res.status(500).json({ error: "Internal Server Error" });
+          } else {
+            console.log("Attendance fetched from database:", results);
 
-          // Query the students table to get the id and name of all students
-          const studentsQuery = "SELECT id, name FROM students;";
+            // Query the students table to get the id and name of all students
+            const studentsQuery = "SELECT id, name FROM students;";
 
-          connection.query(studentsQuery, (studentsErr, studentsResults) => {
-            if (studentsErr) {
-              console.error("Error fetching student data from database:", studentsErr.message);
-              res.status(500).json({ error: "Internal Server Error" });
-            } else {
-              console.log("Student data fetched from database:", studentsResults);
-              res.status(200).json({key:1, attendance: results, students:studentsResults });
-            }
-          });
-        }
-      });
+            connection.query(studentsQuery, (studentsErr, studentsResults) => {
+              if (studentsErr) {
+                console.error(
+                  "Error fetching student data from database:",
+                  studentsErr.message
+                );
+                res.status(500).json({ error: "Internal Server Error" });
+              } else {
+                console.log(
+                  "Student data fetched from database:",
+                  studentsResults
+                );
+                res
+                  .status(200)
+                  .json({
+                    key: 1,
+                    attendance: results,
+                    students: studentsResults,
+                  });
+              }
+            });
+          }
+        });
+      }
     }
-  });
+  );
 };
-
 
 const getStatusText = (status) => {
   switch (status) {
@@ -395,14 +419,86 @@ const getStatusText = (status) => {
   }
 };
 
+const handleCourseDetails = async (req, res) => {
+  const { email, isLab, courseId, counsellor, courseName, credits } = req.body;
+
+  const query = `
+    UPDATE staff
+    SET 
+      course_id = ?,
+      counsellor_number = ?
+    WHERE
+      staff_email = ?
+  `;
+
+  const values = [courseId, counsellor, email];
+
+  connection.query(query, values, async (error, results) => {
+    if (error) {
+      console.error("Error updating staff details:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      console.log("Staff details updated successfully:", results);
+
+      // Update isCounsellor in MongoDB User collection if counsellor value is not 0
+      if (counsellor !== 0) {
+        try {
+          await User.updateOne({ email }, { $set: { isCounsellor: true } });
+          console.log("User updated as Counsellor in MongoDB");
+        } catch (err) {
+          console.error("Error updating User as Counsellor in MongoDB:", err);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+      }
+
+      const courseQuery =
+        "INSERT INTO course(course_id, course_name, credits, isLab) VALUES (?, ?, ?, ?);";
+      const queryValues = [courseId, courseName, credits, isLab];
+      
+      connection.query(courseQuery, queryValues, (courseError, courseResults) => {
+        if (courseError) {
+          console.error("Error updating course details:", courseError);
+          return res.status(500).json({ error: "Internal Server Error" });
+        } else {
+          console.log("Course details updated successfully:", courseResults);
+          return res.status(200).json({ message: "Staff details updated successfully" });
+        }
+      });
+    }
+  });
+};
+
+const handleFetchCourseDetails = async (req, res) => {
+  try {
+    // Query to fetch staff details
+    const staffQuery = "SELECT staff_name as counsellors FROM staff where counsellor_number NOT like 0";
+    connection.query(staffQuery, (staffError, staffResults) => {
+      if (staffError) {
+        console.error("Error fetching staff details:", staffError);
+        return res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        // Query to fetch course details
+        const staffDetails = staffResults;
+        return res.status(200).json({staffDetails});
+      }
+    });
+  } catch (error) {
+    console.error("Error during fetch course details:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 module.exports = {
   handleUserLogin,
+  handleFetchCourseDetails,
   handleUserSignup,
   attendanceUpdate,
   getAttendance,
   getStaffAttendance,
+  handleCourseDetails,
 };
+
 /*
 hashing passwords
 attendance percentage column
