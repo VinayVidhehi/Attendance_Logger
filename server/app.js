@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.get('/attendance', attendanceUpdate);
 app.get('/get-attendance', getAttendance);
 app.get('/attendance-staffview', getStaffAttendance);
-app.get('/course-details', handleFetchCourseDetails)
+app.get('/course-details', handleFetchCourseDetails);
 
 app.post('/signup', handleUserSignup);
 app.post('/login', handleUserLogin);

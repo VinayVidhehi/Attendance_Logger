@@ -12,7 +12,7 @@ const Signup = () => {
   const [batch, setBatch] = useState("");
  // const [batches, setBatches] = useState("");
   const [Counsellor, setCounsellor] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(true);
   const [counsellors, setCounsellors] = useState([]);
   const [messages, setMessages] = useState(
     "Enter the correct credentials to sign up"
@@ -29,14 +29,14 @@ const Signup = () => {
   }, [isStudent]);
 
   const handleLoadFormData = async() => {
-     const response = await axios.get('http://localhost:7800/course-details');
+     const response = await axios.get('http://localhost:7800/course-details?key=0');
      if (response.data.key === 0) {
       console.log("unknown error server down");
       setMessages("please try again later");
      } else {
-          const courseDetails = response.data.staffDetails[0];
+          const courseDetails = response.data.staffDetails;
           console.log(courseDetails);
-          //setCourses(courseDetails)
+         setCounsellors(courseDetails);
      }
   }
 
@@ -179,9 +179,9 @@ const Signup = () => {
               <option value="" disabled>
                 Select counsellor
               </option>
-              {counsellors.map((counselor, index) => (
-                <option key={index} value={counselor}>
-                  {counselor}
+              {counsellors.map((counsellors_, index) => (
+                <option key={index} value={counsellors_}>
+                  {counsellors_.counsellor}
                 </option>
               ))}
             </select>

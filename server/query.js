@@ -34,12 +34,10 @@ function runQuery() {
   const email = "vinayvidhehi@gmail.com";
   const counsellor = 1;
   const query = `
-    UPDATE staff
-    SET 
-      course_id = ?,
-      counsellor_number = ?
-    WHERE
-      staff_email = ?
+  SELECT course_name 
+FROM course 
+WHERE course_id = (SELECT course_id FROM staff WHERE staff_email = 'vinayvidhehi@gmail.com');
+
   `;
 
 //   const values = [courseId, counsellor, email];
@@ -55,7 +53,7 @@ function runQuery() {
 
 let id = 0;
 connection.query(
-  "desc students",
+  'desc course_attendance',
   (error, result) => {
     if (error) {
       console.log(error);

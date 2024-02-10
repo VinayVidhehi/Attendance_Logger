@@ -10,36 +10,44 @@ const Staff = () => {
   const [counsellor, setCounsellor] = useState(0);
   const [courseName, setCourseName] = useState("");
   const [credits, setCredits] = useState(1);
+  const [check, setCheck] = useState(true);
 
   const location = useLocation();
   const email = location.state.email;
   console.log("email is ",email);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:7800/attendance-staffview?email=${email}`
-  //       );
+  useEffect(() => {
+    courseData();
+    //fetchAttendanceData();
+  }, [email]);
 
-  //       response.data.attendance.map((e, ind) => console.log(e.date));
+  const courseData = async() => {
+    const response = await axios.get(`http://localhost:7800/course-details?email=${email}&key=1`);
+    if(response.data.key === 1) setCheck(false);
+    else console.log("nahhh fill details bruh");
+  }
 
-  //       if (response.data.key === 1) {
-  //         setAttendanceData(response.data.attendance);
-  //         setStudents(response.data.students);
-  //       } else {
-  //         console.log(
-  //           "Invalid response structure or key value:",
-  //           response.data
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching attendance staff view:", error.message);
-  //     }
-  //   };
+  const fetchAttendanceData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:7800/attendance-staffview?email=${email}`
+      );
 
-  //   fetchData();
-  // }, [email]);
+      response.data.attendance.map((e, ind) => console.log(e.date));
+
+      if (response.data.key === 1) {
+        setAttendanceData(response.data.attendance);
+        setStudents(response.data.students);
+      } else {
+        console.log(
+          "Invalid response structure or key value:",
+          response.data
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching attendance staff view:", error.message);
+    }
+  };
 
   const handleCourseDetails = async () => {
     try {
@@ -61,7 +69,8 @@ const Staff = () => {
     <div>
       <div>
         <h2>Welcome to AMS</h2>
-        <h3>Update course details here</h3>
+        {check && <div>
+          <h3>Update course details here</h3>
         <form onSubmit={handleCourseDetails}>
           <div>
             <label>Does this course contains Laboratory?</label>
@@ -105,7 +114,8 @@ const Staff = () => {
           </div>
           <button type="submit">Update Course Details</button>
         </form>
-      </div>
+        </div> }
+      </div> 
     </div>
   );
 };
