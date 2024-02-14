@@ -10,7 +10,7 @@ const Staff = () => {
   const [counsellor, setCounsellor] = useState(0);
   const [courseName, setCourseName] = useState("");
   const [credits, setCredits] = useState(1);
-  const [check, setCheck] = useState(true);
+  const [checkCourse, setCheckCourse] = useState(true);
 
   const location = useLocation();
   const email = location.state.email;
@@ -23,7 +23,7 @@ const Staff = () => {
 
   const courseData = async() => {
     const response = await axios.get(`https://textstrict-app.onrender.com/course-details?email=${email}&key=1`);
-    if(response.data.key === 1) setCheck(false);
+    if(response.data.key === 1) setCheckCourse(false);
     else console.log("nahhh fill details bruh");
   }
 
@@ -69,15 +69,15 @@ const Staff = () => {
     <div>
       <div>
         <h2>Welcome to AMS</h2>
-        {check && <div>
+        {checkCourse && <div>
           <h3>Update course details here</h3>
         <form onSubmit={handleCourseDetails}>
           <div>
             <label>Does this course contains Laboratory?</label>
             <input
               type="checkbox"
-              checked={isLab}
-              onChange={(e) => setIsLab(e.target.checked)}
+              checkCourseed={isLab}
+              onChange={(e) => setIsLab(e.target.checkCourseed)}
             />
           </div>
           <div>

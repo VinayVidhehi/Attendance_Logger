@@ -501,7 +501,7 @@ const handleFetchCourseDetails = async (req, res) => {
         console.log("results", result);
         if (error) {
           console.log(error);
-        } else if (result != []) {
+        } else if (result.length > 0) {
           console.log("results", result);
           res.status(200).json({ message: "fetch successful", key: 1 });
         } else {

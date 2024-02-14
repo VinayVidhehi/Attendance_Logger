@@ -53,12 +53,14 @@ WHERE course_id = (SELECT course_id FROM staff WHERE staff_email = 'vinayvidhehi
 
 let id = 0;
 connection.query(
-  `select * from course`,
+  `SELECT course_name 
+  FROM course 
+  WHERE course_id = (SELECT course_id FROM staff WHERE staff_email = 'vinayvidhehi@gmail.com')`,
   (error, result) => {
     if (error) {
       console.log(error);
     } else {
-      console.log(result);
+      console.log(result.length == 0);
     }
   }
 );
