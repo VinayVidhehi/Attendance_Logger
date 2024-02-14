@@ -73,6 +73,10 @@ const handleUserSignup = async (req, res) => {
 
     if (key == 1) {
       const user = await User.findOne({ email });
+      const otp = await OTPModel.findOne({email});
+      if(otp) {
+        await OTPModel.findOneAndDelete({email});
+      }
       if (user) {
         // If user already exists, send a response indicating that
         return res.send({
@@ -89,7 +93,7 @@ const handleUserSignup = async (req, res) => {
         .status(200)
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else if (key == 2) {
-      const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
+      const { email, Name, counsellorNumber, OTP, password, usn, batch } = req.body;
 
       // Handle user registration and OTP validation
       if (!OTP) {

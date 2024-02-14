@@ -12,7 +12,7 @@ const Signup = () => {
   const [batch, setBatch] = useState("");
  // const [batches, setBatches] = useState("");
   const [Counsellor, setCounsellor] = useState("");
-  const [authenticated, setAuthenticated] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
   const [counsellors, setCounsellors] = useState([]);
   const [messages, setMessages] = useState(
     "Enter the correct credentials to sign up"
@@ -157,7 +157,7 @@ const Signup = () => {
             />
           )}
 
-          {authenticated && (
+          {authenticated && isStudent && (
             <select value={batch} onChange={(e) => setBatch(e.target.value)}>
               <option value="" disabled>
                 {isStudent && <h3>Select </h3>}

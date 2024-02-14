@@ -53,7 +53,7 @@ WHERE course_id = (SELECT course_id FROM staff WHERE staff_email = 'vinayvidhehi
 
 let id = 0;
 connection.query(
-  'desc course_attendance',
+  `select * from course`,
   (error, result) => {
     if (error) {
       console.log(error);
