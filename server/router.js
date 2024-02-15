@@ -4,7 +4,6 @@ const OTPModel = require("./models/otp_schema");
 const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
-const { Connection } = require("mysql2/typings/mysql/lib/Connection");
 const saltRounds = 10;
 
 const connection = mysql.createConnection({
