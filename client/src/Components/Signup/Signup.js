@@ -17,7 +17,6 @@ const Signup = () => {
   const [messages, setMessages] = useState(
     "Enter the correct credentials to sign up"
   );
-  const [courseId, setCourseId] = useState("");
   const [isStudent, setIsStudent] = useState(true);
 
   const navigate = useNavigate();

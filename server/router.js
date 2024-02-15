@@ -4,6 +4,7 @@ const OTPModel = require("./models/otp_schema");
 const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
+const { Connection } = require("mysql2/typings/mysql/lib/Connection");
 const saltRounds = 10;
 
 const connection = mysql.createConnection({
@@ -73,9 +74,9 @@ const handleUserSignup = async (req, res) => {
 
     if (key == 1) {
       const user = await User.findOne({ email });
-      const otp = await OTPModel.findOne({email});
-      if(otp) {
-        await OTPModel.findOneAndDelete({email});
+      const otp = await OTPModel.findOne({ email });
+      if (otp) {
+        await OTPModel.findOneAndDelete({ email });
       }
       if (user) {
         // If user already exists, send a response indicating that
@@ -93,7 +94,8 @@ const handleUserSignup = async (req, res) => {
         .status(200)
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else if (key == 2) {
-      const { email, Name, counsellorNumber, OTP, password, usn, batch } = req.body;
+      const { email, Name, counsellorNumber, OTP, password, usn, batch } =
+        req.body;
 
       // Handle user registration and OTP validation
       if (!OTP) {
@@ -173,7 +175,7 @@ const handleUserSignup = async (req, res) => {
       await newUser.save();
 
       let id = 0;
-      connection.query(
+      await connection.query(
         "select count(staff_id) as count from staff",
         (error, result) => {
           if (error) {
@@ -223,16 +225,41 @@ const attendanceUpdate = async (req, res) => {
   // Split the incoming comma-separated string into an array of IDs
   const incomingIDs = attendanceString.split(",").map(Number);
 
+  let studentStrength;
+  connection.query(
+    "select count(student_email) as count from students",
+    (error, result) => {
+      if (error) console.log("error at student strength", error);
+      else {
+        console.log(result[0].count);
+        studentStrength = result;
+      }
+    }
+  );
   // Create an array to store the attendance status (0 or 1) for each ID
-  const status = Array(80).fill(0);
+  const status = Array(studentStrength).fill(2);
 
   // Loop through the incoming IDs and set the corresponding status to 1
   incomingIDs.forEach((id) => {
     // Check if the ID is within the valid range (0 to 69)
-    if (id > 0 && id < 80) {
-      status[id - 1] = 1;
-    }
+    //if (id > 0 && id < studentStrength) {
+    status[id] = 1;
+    // }
   });
+
+  //query to select the maximum batch value so that the loop runs only that number of times
+  connection.query(
+    "select max(batch) as range from students",
+    (error, result) => {
+      if (error) console.log("error in fetching highest lab value", error);
+      else {
+        console.log(range);
+        for (let i = 0; i < range; i++) {
+          //here the status array will have the array values of 2s and 1s but which tells that the class is not taken or student is present respectively, but when you find first 1, all the students who belong to that same batch will have lab so those students who belong to the same batch as the first present student in the array (1) should be marked 0 because they are absent, also there should a variable which marks the end of students of those particaular batch so that the next time it finds 1 should not be from the same batch as the older batch)
+        }
+      }
+    }
+  );
 
   // Convert the status array to a string
   const statusString = status.join("");
@@ -271,7 +298,8 @@ const getAttendance = async (req, res) => {
       console.log("Attendance fetched from database:", results);
 
       // Query the students table to get the id based on the provided email
-      const studentsQuery = "SELECT student_id, student_name FROM students WHERE student_email = ?";
+      const studentsQuery =
+        "SELECT student_id, student_name FROM students WHERE student_email = ?";
 
       connection.query(
         studentsQuery,
@@ -285,7 +313,7 @@ const getAttendance = async (req, res) => {
             res.status(500).json({ error: "Internal Server Error" });
           } else {
             console.log("Student ID fetched from database:", studentsResults);
-            const studentID = 
+            const studentID =
               studentsResults.length > 0 ? studentsResults[0].id : null;
 
             console.log("result is ", studentsResults);
@@ -503,6 +531,12 @@ const handleFetchCourseDetails = async (req, res) => {
           console.log(error);
         } else if (result.length > 0) {
           console.log("results", result);
+          connection.query('select count(*) as count from staff where counsellor_number NOT like 0', (error, counsellorNumberResult) => {
+            if(error) console.log("error while knowing the number of counsellors ", error);
+            else {
+              console.log(counsellorNumberResult);
+            }
+          })
           res.status(200).json({ message: "fetch successful", key: 1 });
         } else {
           console.log("results", result);

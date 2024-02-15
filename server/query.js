@@ -51,19 +51,13 @@ WHERE course_id = (SELECT course_id FROM staff WHERE staff_email = 'vinayvidhehi
 //   });
 // }
 
-let id = 0;
-connection.query(
-  `SELECT course_name 
-  FROM course 
-  WHERE course_id = (SELECT course_id FROM staff WHERE staff_email = 'vinayvidhehi@gmail.com')`,
-  (error, result) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(result.length == 0);
-    }
+let studentStrength;
+connection.query('select * from staff', (error, result) => {
+  if(error) console.log("error at student strength",error);
+  else {
+    console.log(result);
   }
-);
+})
 }
 
 runQuery();
