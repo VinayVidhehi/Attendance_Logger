@@ -29,42 +29,20 @@ connection.connect((err) => {
   console.log('Connected to MySQL database');
 });
 
-function runQuery() {
-  const courseId = "21CS53";
-  const email = "vinayvidhehi@gmail.com";
-  const counsellor = 1;
-  const query = `
-  SELECT course_name 
-FROM course 
-WHERE course_id = (SELECT course_id FROM staff WHERE staff_email = 'vinayvidhehi@gmail.com');
+// Define a route handler
+app.get('/deleteCourse', (req, res) => {
+  connection.query("select * from course ", (error, result) => {
+    if (error) {
+      console.log("Error deleting records:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      console.log("Records deleted successfully:", result);
+      res.status(200).json({ message: "Records deleted successfully" });
+    }
+  });
+});
 
-  `;
-
-//   const values = [courseId, counsellor, email];
-//   connection.query(
-//     'select * from staff', values, (error, result) => {
-//     if (error) {
-//       console.log("Error: ", error.message);
-//     } else {
-//       console.log("Result: ", result);
-//     }
-//   });
-// }
-
-let studentStrength;
-connection.query('select * from staff', (error, result) => {
-  if(error) console.log("error at student strength",error);
-  else {
-    console.log(result);
-  }
-})
-}
-
-runQuery();
-
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-//0111111101011111111111101101111111110010111222222222222222222222222222
-//CREATE TABLE staff ( staff_id int PRIMARY KEY, staff_name VARCHAR(100), staff_email varchar(100), course_id varchar(10), counsellor_number int);

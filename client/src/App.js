@@ -5,6 +5,7 @@ import Footer from './Components/Footer/Footer';
 import Signup from './Components/Signup/Signup';
 import Login from './Components/Login/Login';
 import Staff from './Components/Staff/Staff';
+import CourseDetails from './Components/Staff/CourseDetails';
 
 import { Routes, Route } from 'react-router-dom';
 import PerformOCR from './Components/Body/OCR';
@@ -18,6 +19,7 @@ const App = () => {
         <Route path='/signup' element={<Signup />} />
         <Route path='/' element={<Body />} />
         <Route path='/staff' element={<Staff />} />
+        <Route path="/staff/course-details" element={<CourseDetails />} />
         <Route path='/OCR' element={<PerformOCR/>} />
       </Routes>
       <Footer />

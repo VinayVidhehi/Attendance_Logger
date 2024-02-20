@@ -173,24 +173,9 @@ const handleUserSignup = async (req, res) => {
       // save all the incoming variables related to the user to students table in MySQL
       await newUser.save();
 
-      let id = 0;
-      await connection.query(
-        "select count(staff_id) as count from staff",
-        (error, result) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log(result);
-            id = result[0].count;
-            console.log("id is", id);
-          }
-        }
-      );
-
       const query =
-        "insert into staff(staff_name, staff_email, staff_id) values (?, ?, ?)";
-      console.log("the id is ss", id);
-      const values = [Name, email, id];
+        "insert into staff(staff_name, staff_email) values (?, ?)";
+      const values = [Name, email];
 
       connection.query(query, values, (error, result) => {
         if (error) {
@@ -364,8 +349,8 @@ const handleUserLogin = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-
-    if (!user) {
+    console.log("user,", user);
+    if (user == null) {
       // User not found
       res.send({ key: 0, message: "User not found" });
       return;
@@ -380,7 +365,7 @@ const handleUserLogin = async (req, res) => {
       else res.send({ key: 1, message: "User found" });
     } else {
       // Passwords do not match
-      res.send({ key: 0, message: "Incorrect password" });
+      res.send({ key: 4, message: "Incorrect password" });
     }
   } catch (error) {
     console.log("Error while searching for user:", error.message);
@@ -470,7 +455,7 @@ const handleCourseDetails = async (req, res) => {
   `;
 
   const values = [courseId, counsellor, email];
-
+  console.log("credentials are", req.body);
   connection.query(query, values, async (error, results) => {
     if (error) {
       console.error("Error updating staff details:", error);
@@ -481,8 +466,8 @@ const handleCourseDetails = async (req, res) => {
       // Update isCounsellor in MongoDB User collection if counsellor value is not 0
       if (counsellor !== 0) {
         try {
-          await User.updateOne({ email }, { $set: { isCounsellor: true } });
-          console.log("User updated as Counsellor in MongoDB");
+          const mongoresponse = await User.updateOne({ email }, { $set: { isCounsellor: true } });
+          console.log("User updated as Counsellor in MongoDB", mongoresponse);
         } catch (err) {
           console.error("Error updating User as Counsellor in MongoDB:", err);
           return res.status(500).json({ error: "Internal Server Error" });

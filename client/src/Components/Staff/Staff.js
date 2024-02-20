@@ -1,121 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import "./Staff.css";
+import { IoMenu } from "react-icons/io5";
 const Staff = () => {
-  const [attendanceData, setAttendanceData] = useState({});
-  const [students, setStudents] = useState([]);
-  const [isLab, setIsLab] = useState(false);
-  const [courseId, setCourseId] = useState("");
-  const [counsellor, setCounsellor] = useState(0);
-  const [courseName, setCourseName] = useState("");
-  const [credits, setCredits] = useState(1);
+
   const [checkCourse, setCheckCourse] = useState(true);
+  const navigate = useNavigate();
 
   const location = useLocation();
   const email = location.state.email;
-  console.log("email is ",email);
+  console.log("email is ", email);
 
   useEffect(() => {
     courseData();
-    //fetchAttendanceData();
-  }, [email]);
+  }, []);
 
-  const courseData = async() => {
+  const courseData = async () => {
     const response = await axios.get(`https://textstrict-app.onrender.com/course-details?email=${email}&key=1`);
-    if(response.data.key === 1) setCheckCourse(false);
+    if (response.data.key === 1) setCheckCourse(false);
     else console.log("nahhh fill details bruh");
+  };
+
+
+  const CourseDetails = async() => {
+    navigate('course-details', {state:{email}});
   }
 
-  const fetchAttendanceData = async () => {
-    try {
-      const response = await axios.get(
-        `https://textstrict-app.onrender.com/attendance-staffview?email=${email}`
-      );
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-      response.data.attendance.map((e, ind) => console.log(e.date));
-
-      if (response.data.key === 1) {
-        setAttendanceData(response.data.attendance);
-        setStudents(response.data.students);
-      } else {
-        console.log(
-          "Invalid response structure or key value:",
-          response.data
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching attendance staff view:", error.message);
-    }
+  // Function to toggle the dropdown
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
-
-  const handleCourseDetails = async () => {
-    try {
-      const response = await axios.post("https://textstrict-app.onrender.com/course-details", {
-        email,
-        isLab,
-        courseId,
-        counsellor,
-        courseName,
-        credits
-      });
-      console.log("Response:", response.data);
-    } catch (error) {
-      console.error("Error updating course details:", error.message);
-    }
-  };
-
   return (
     <div>
       <div>
         <h2>Welcome to AMS</h2>
-        {checkCourse && <div>
-          <h3>Update course details here</h3>
-        <form onSubmit={handleCourseDetails}>
-          <div>
-            <label>Does this course contains Laboratory?</label>
-            <input
-              type="checkbox"
-              checkCourseed={isLab}
-              onChange={(e) => setIsLab(e.target.checkCourseed)}
-            />
-          </div>
-          <div>
-            <label>Enter the course ID</label>
-            <input
-              type="text"
-              value={courseId}
-              onChange={(e) => setCourseId(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Course Name:</label>
-            <input
-              type="text"
-              value={courseName}
-              onChange={(e) => setCourseName(e.target.value)}
-            />
-          </div>
-          <div>
-            <label>Are you a counsellor, if yes then enter the batch for which you are a counsellor for. If not then let that be zero</label>
-            <input
-              type="number"
-              value={counsellor}
-              onChange={(e) => setCounsellor(parseInt(e.target.value))}
-            />
-          </div>
-          <div>
-            <label>total number of credits this course holds is</label>
-            <input
-              type="number"
-              value={credits}
-              onChange={(e) => setCredits(parseInt(e.target.value))}
-            />
-          </div>
-          <button type="submit">Update Course Details</button>
-        </form>
-        </div> }
-      </div> 
+        {checkCourse && (
+          
+         <div className="menu-container">
+          <button className="menu-button" onClick={toggleDropdown}>
+            <IoMenu />
+          </button>
+          {isDropdownOpen && (
+            <div className="dropdown-content">
+             <button onClick={CourseDetails}>Course Details</button>
+            </div>
+          )}
+        </div>
+        )}
+      </div>
+     
     </div>
   );
 };

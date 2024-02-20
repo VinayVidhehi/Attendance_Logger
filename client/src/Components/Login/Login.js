@@ -29,8 +29,10 @@ const Login = () => {
     } else if (response.data.key === 3) {
       setMessages("logged in succuessfully");
       navigate("/staff", { state: { email, password, key: 3 } });
-    } else {
+    } else if(response.data.key === 4){
       setMessages("wrong credentials, try again");
+    } else {
+      setMessages("User Not found, please sign-up");
     }
   };
 
