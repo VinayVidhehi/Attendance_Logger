@@ -21,11 +21,9 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const batches = [1,2,3];
-
   useEffect(()=> {
     handleLoadFormData();
-  }, [isStudent]);
+  }, []);
 
   const handleLoadFormData = async() => {
      const response = await axios.get('https://textstrict-app.onrender.com/course-details?key=0');
@@ -157,17 +155,12 @@ const Signup = () => {
           )}
 
           {authenticated && isStudent && (
-            <select value={batch} onChange={(e) => setBatch(e.target.value)}>
-              <option value="" disabled>
-                {isStudent && <h3>Select </h3>}
-                
-              </option>
-              {batches.map((lab, index) => (
-                <option key={index} value={lab}>
-                  {lab}
-                </option>
-              ))}
-            </select>
+            <input
+            type="Number"
+            placeholder="enter your lab batch"
+            value={batch}
+            onChange={(e) => setBatch(e.target.value)}
+          />
           )}
 
           {authenticated && isStudent && (

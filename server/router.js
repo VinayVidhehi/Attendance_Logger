@@ -250,20 +250,20 @@ const attendanceUpdate = async (req, res) => {
   console.log("status string now is", statusString);
 
   // Assuming you have a table named courseId_attendance with columns 'date', 'day', 'courseId', and 'status'
-  const query =
-    "INSERT INTO course_attendance (date, day, course_id, attendance) VALUES (?, ?, ?, ?)";
+  // const query =
+  //   "INSERT INTO course_attendance (date, day, course_id, attendance) VALUES (?, ?, ?, ?)";
 
-  connection.query(
-    query,
-    [currentDate, currentDay, courseId, statusString],
-    (err, results) => {
-      if (err) {
-        console.error("Error saving attendance to database:", err.message);
-      } else {
-        console.log("Attendance saved to database.", results);
-      }
-    }
-  );
+  // connection.query(
+  //   query,
+  //   [currentDate, currentDay, courseId, statusString],
+  //   (err, results) => {
+  //     if (err) {
+  //       console.error("Error saving attendance to database:", err.message);
+  //     } else {
+  //       console.log("Attendance saved to database.", results);
+  //     }
+  //   }
+  // );
 
   res.json({ message: "Hello, this is your Express server with CORS!\n" });
 };
@@ -530,11 +530,11 @@ const handleFetchCourseDetails = async (req, res) => {
     } catch (error) {
       console.log(error, "this is the error");
     }
-  } else if (key === 0) {
+  } else if (key == 0) {
     //console.log("am i here")
     try {
       // Query to fetch staff details
-      const staffQuery = "SELECT staff_name as counsellor FROM staff";
+      const staffQuery = "SELECT staff_name as counsellor FROM staff where counsellor_number not like 0";
       connection.query(staffQuery, (staffError, staffResults) => {
         if (staffError) {
           console.error("Error fetching staff details:", staffError);
