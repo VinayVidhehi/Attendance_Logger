@@ -173,9 +173,13 @@ const handleUserSignup = async (req, res) => {
       // save all the incoming variables related to the user to students table in MySQL
       await newUser.save();
 
-      const query =
-        "insert into staff(staff_name, staff_email) values (?, ?)";
-      const values = [Name, email];
+     connection.query('select count(*) as count from staff', (countError, count) => {
+      if(countError) console.log("error while counting");
+      else {
+        console.log(count[0].count);
+        const query =
+        "insert into staff(staff_id, staff_name, staff_email) values (?, ?, ?)";
+      const values = [count[0].count, Name, email];
 
       connection.query(query, values, (error, result) => {
         if (error) {
@@ -184,6 +188,8 @@ const handleUserSignup = async (req, res) => {
           console.log(result);
         }
       });
+      }
+     })
 
       // Complete this to save users in students table;
       await OTPModel.findOneAndDelete({ email });

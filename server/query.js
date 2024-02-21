@@ -31,7 +31,7 @@ connection.connect((err) => {
 
 // Define a route handler
 app.get('/deleteCourse', (req, res) => {
-  connection.query("SELECT staff_name as counsellor FROM staff", (error, result) => {
+  connection.query("delete from course", (error, result) => {
     if (error) {
       console.log("Error deleting records:", error);
       res.status(500).json({ error: "Internal Server Error" });
