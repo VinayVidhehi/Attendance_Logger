@@ -161,18 +161,6 @@ const handleUserSignup = async (req, res) => {
         });
       }
 
-      // Hash the password before storing it
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      const newUser = new User({
-        email,
-        password: hashedPassword,
-        isStaff: true,
-        isCounsellor: false,
-      });
-      // save all the incoming variables related to the user to students table in MySQL
-      await newUser.save();
-
      connection.query('select count(*) as count from staff', (countError, count) => {
       if(countError) console.log("error while counting");
       else {
@@ -190,6 +178,18 @@ const handleUserSignup = async (req, res) => {
       });
       }
      })
+
+      // Hash the password before storing it
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+     const newUser = new User({
+      email,
+      password: hashedPassword,
+      isStaff: true,
+      isCounsellor: false,
+    });
+    // save all the incoming variables related to the user to students table in MySQL
+    await newUser.save();
 
       // Complete this to save users in students table;
       await OTPModel.findOneAndDelete({ email });
@@ -495,7 +495,7 @@ const handleCourseDetails = async (req, res) => {
             console.log("Course details updated successfully:", courseResults);
             return res
               .status(200)
-              .json({ message: "Staff details updated successfully" });
+              .json({ message: "Staff details updated successfully", key:1 });
           }
         }
       );

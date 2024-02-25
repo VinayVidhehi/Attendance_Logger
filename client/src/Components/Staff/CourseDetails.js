@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate , useLocation } from "react-router-dom";
 import axios from "axios";
 
 
@@ -11,6 +11,7 @@ const CourseDetails = () => {
   const [credits, setCredits] = useState(1);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const email = location.state.email;
   console.log(email);
 
@@ -26,6 +27,9 @@ const CourseDetails = () => {
         credits,
       });
       console.log("Response:", response.data);
+      if(response.data.key == 1) {
+        navigate('staff', {state:{message:"succesfully logged in"}});
+      }
     } catch (error) {
       console.error("Error updating course details:", error.message);
     }
