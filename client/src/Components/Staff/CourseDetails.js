@@ -28,7 +28,7 @@ const CourseDetails = () => {
       });
       console.log("Response:", response.data);
       if(response.data.key == 1) {
-        navigate('staff', {state:{message:"succesfully logged in"}});
+        navigate('../', {state:{message:"succesfully logged in"}});
       }
     } catch (error) {
       console.error("Error updating course details:", error.message);
