@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate , useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-
+import "./CourseDetails.css";
 
 const CourseDetails = () => {
   const [isLab, setIsLab] = useState(false);
@@ -13,7 +13,6 @@ const CourseDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state.email;
-  console.log(email);
 
   const handleCourseDetails = async (e) => {
     e.preventDefault();
@@ -27,7 +26,7 @@ const CourseDetails = () => {
         credits,
       });
       console.log("Response:", response.data);
-      if(response.data.key == 1) {
+      if(response.data.key === 1) {
         navigate('../', {state:{message:"succesfully logged in"}});
       }
     } catch (error) {
@@ -36,13 +35,13 @@ const CourseDetails = () => {
   };
 
   return (
-    <div>
-      <h3>Update Course Details</h3>
+    <div className="course-details-container">
+      <h2>Update Course Details</h2>
       <form onSubmit={handleCourseDetails}>
         <div>
           <label>
             Does this course contain a Laboratory?
-            <input
+            <input className="checkbox"
               type="checkbox"
               checked={isLab}
               onChange={(e) => setIsLab(e.target.checked)}

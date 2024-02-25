@@ -5,7 +5,12 @@
     background-color: #05386b; /* Change to your preferred background color */
     color: #edf5e1; /* Change to your preferred text color */
     font-family: 'Arial', sans-serif; /* Change to your preferred font family */
+  
+    flex-shrink: 0;
   }
+  
+  /* Optionally, you can style the footer with a background color */
+ 
   
   .main-heading {
     font-size: 1.5em;

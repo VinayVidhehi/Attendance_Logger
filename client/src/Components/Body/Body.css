@@ -1,4 +1,7 @@
+html, body {width: 100vw; height: 100vh;}
+.main-container{
 
+}
 .welcome-content {
     display: flex;
     justify-content: space-between;
@@ -89,4 +92,15 @@ p{
 
 section{
     margin: 20px;
+    flex: 1;
+}
+footer {
+  flex-shrink: 0;
+}
+
+/* Optionally, you can style the footer with a background color */
+footer {
+  background-color: #f0f0f0; /* Example color */
+  padding: 20px;
+  text-align: center;
 }

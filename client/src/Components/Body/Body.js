@@ -30,7 +30,7 @@ const Body = () => {
   };
 
   return (
-    <div>
+    <div id="main-container">
       {location.state && location.state.email && location.state.password ? (
         <div>
           <div>Welcome to AMS</div>

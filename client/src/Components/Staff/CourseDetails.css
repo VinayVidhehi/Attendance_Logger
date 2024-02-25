@@ -1,10 +1,43 @@
 .course-details-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: white;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
+  max-width: 600px;
+  margin: 20px; /* Margin around the form */
+  padding: 20px;
+  margin-left: 20px; /* Add left margin */
+  color: #05386b;
+}
+
+.course-details-container form {
+  display: flex;
+  flex-direction: column;
+  color: #05386b;
+}
+
+.course-details-container form > div {
+  margin-bottom: 15px;
+  color: #05386b;
+}
+
+.course-details-container form button {
+  margin-top: 20px;
+  background-color: #05386b;
+  color: white;
+}
+
+.footer {
+  margin-top: 20px;
+}
+h2{
+  margin-bottom: 40px;
+  font-size: large;
+  font-weight: bold;
+}
+label{
+  color: #05386b;
+  padding: 20px;
+}
+.checkbox{
+  color: #05386b;
+  padding: 20px;
+  zoom: 0.5;
+  float: right;
+}
