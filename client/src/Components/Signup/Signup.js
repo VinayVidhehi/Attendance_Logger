@@ -10,7 +10,6 @@ const Signup = () => {
   const [OTP, setOTP] = useState(null);
   const [Name, setName] = useState("");
   const [batch, setBatch] = useState("");
- // const [batches, setBatches] = useState("");
   const [Counsellor, setCounsellor] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [counsellors, setCounsellors] = useState([]);
@@ -26,7 +25,7 @@ const Signup = () => {
   }, []);
 
   const handleLoadFormData = async() => {
-     const response = await axios.get('https://textstrict-app.onrender.com/course-details?key=0');
+     const response = await axios.get(`https://textstrict-app.onrender.com/course-details?key=0`);
      if (response.data.key === 0) {
       console.log("unknown error server down");
       setMessages("please try again later");
@@ -80,7 +79,7 @@ const Signup = () => {
 
           if (response.data.key) {
             console.log("Sending", email, password);
-            navigate("/", { state: { email, password } });
+            navigate("/student", { state: { email} });
           }
         } catch (error) {
           console.log("Error while signing up: ", error.message);

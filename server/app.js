@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { handleUserLogin, handleUserSignup, attendanceUpdate, getAttendance, getStaffAttendance, handleCourseDetails,  handleFetchCourseDetails } = require('./router');
+const { handleUserLogin, handleUserSignup, attendanceUpdate, getStudentAttendance, getStaffAttendance, handleCourseDetails,  handleFetchCourseDetails } = require('./router');
 
 const app = express();
 const PORT = 7800;
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 // Change the route to /attendance
 app.get('/attendance', attendanceUpdate);
-app.get('/get-attendance', getAttendance);
+app.get('/get-attendance', getStudentAttendance);
 app.get('/attendance-staffview', getStaffAttendance);
 app.get('/course-details', handleFetchCourseDetails);
 

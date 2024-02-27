@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import AttendanceDisplay from "../Body/AttendanceDisplay";
 import "./Student.css";
 
-const Body = () => {
+const Student = () => {
   const [attendancekey, setAttendancekey] = useState(false);
   const [buttonmessage, setButtonmessage] = useState("view attendance");
 
@@ -34,4 +34,4 @@ const Body = () => {
   );
 };
 
-export default Body;
+export default Student;

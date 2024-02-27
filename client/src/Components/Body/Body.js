@@ -5,29 +5,21 @@ import AttendanceDisplay from "./AttendanceDisplay";
 import "./Body.css";
 
 const Body = () => {
- 
-
   const location = useLocation();
-
-
 
   return (
     <div id="main-container">
-     
-        <div>
-          
-        </div>
-      
-    <div className="login">
-        <Link to="/login"  className="login_button">
+      <div></div>
+
+      <div className="login">
+        <Link to="/login" className="login_button">
           Login
         </Link>
-        </div>  
-         
-    
+      </div>
+
       <section>
-      <div>Welcome to AMS</div>
-         
+        <div>Welcome to AMS</div>
+
         <div className="welcome-content">
           <div className="text-content">
             <p className="welcome">
@@ -46,7 +38,7 @@ const Body = () => {
       <section className="features">
         <div className="features-section">
           <p className="welcome">Key Features</p>
-          <ul classname = "list">
+          <ul classname="list">
             <li>Effortless Attendance Tracking</li>
             <li>Real-time Reporting and Analytics</li>
             <li>User-Friendly Interface for Both Students and Staff</li>

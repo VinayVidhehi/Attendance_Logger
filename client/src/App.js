@@ -11,26 +11,13 @@ import Student from './Components/Student/Student';
 import PerformOCR from './Components/Body/OCR';
 
 const App = () => {
-  // Assume isStudent is a state variable set by the login/signup process
-  const [isStudent, setIsStudent] = useState(false);
-
-  const determineRoute = () => {
-    if (isStudent) {
-      return <Route path='/student' element={<Student />} />;
-    } else {
-      return <Route path='/' element={<Body />} />;
-    }
-  };
-
   return (
     <div className='main-app-container'>
       <Header />
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
-        {/* Redirect to appropriate route based on user type */}
-        {determineRoute()}
-        
+        <Route path='/student' element={<Student />} />
         <Route path='/staff' element={<Staff />} />
         <Route path='/staff/course-details' element={<CourseDetails />} />
         <Route path='/OCR' element={<PerformOCR />} />

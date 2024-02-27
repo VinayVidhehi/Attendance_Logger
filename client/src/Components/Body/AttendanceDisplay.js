@@ -15,6 +15,7 @@ const AttendanceDisplay = (props) => {
             email: props.email,
           },
         });
+        console.log(response.data.attendance);
         setAttendanceData(response.data.attendance); // Extract the attendance array
         setName(response.data.name)
       } catch (error) {
