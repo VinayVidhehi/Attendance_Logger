@@ -1,6 +1,6 @@
 html, body {width: 100vw; height: 100vh;}
 .main-container{
-
+  width: 100vw; height: 100vh;
 }
 .welcome-content {
     display: flex;
@@ -21,7 +21,7 @@ html, body {width: 100vw; height: 100vh;}
   
   div {
    
-    background-color: #5cdb95;
+    background-color: rgb(229, 231, 235);
     font-stretch: expanded;
 
   }
@@ -87,7 +87,7 @@ p{
 }
   
 .login_button:hover {
-  background-color: #379683; /* Adjust the hover color as needed */
+  background-color: black; /* Adjust the hover color as needed */
 }
 
 section{

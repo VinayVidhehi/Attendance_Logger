@@ -22,7 +22,7 @@ const Login = () => {
 
     if (response.data.key === 1) {
       setMessages("logged in successfully");
-      navigate("/", { state: { email, password } });
+      navigate("/student", { state: { email, password } });
     } else if (response.data.key === 2) {
       setMessages("logged in succuessfully");
       navigate("/staff", { state: { email, password, key: 2 } });

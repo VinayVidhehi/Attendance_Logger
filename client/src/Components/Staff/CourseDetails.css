@@ -21,6 +21,7 @@
   margin-top: 20px;
   background-color: #05386b;
   color: white;
+  text-transform: uppercase;
 }
 
 .footer {
@@ -39,5 +40,9 @@ label{
   color: #05386b;
   padding: 20px;
   zoom: 0.5;
-  float: right;
+  display: flex;
+  flex-direction: row;
+  align-content: baseline;
+  font-size: 30px;
+
 }

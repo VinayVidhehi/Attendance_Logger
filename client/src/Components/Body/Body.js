@@ -5,54 +5,29 @@ import AttendanceDisplay from "./AttendanceDisplay";
 import "./Body.css";
 
 const Body = () => {
-  const [attendancekey, setAttendancekey] = useState(false);
-  const [buttonmessage, setButtonmessage] = useState("view attendance");
+ 
 
   const location = useLocation();
 
-  useEffect(() => {
-    // Check if email and password are present in location state
-    if (location.state && location.state.email && location.state.password) {
-      // If email and password are present, show welcome message
-      console.log(
-        "Received props:",
-        location.state.email,
-        location.state.password
-      );
-    }
-  }, [location.state]);
 
-  const handleViewAttendance = () => {
-    console.log("view attendance button clicked");
-    setAttendancekey(!attendancekey);
-    if (buttonmessage === "close") setButtonmessage("view attendance");
-    else setButtonmessage("close");
-  };
 
   return (
     <div id="main-container">
-      {location.state && location.state.email && location.state.password ? (
+     
         <div>
-          <div>Welcome to AMS</div>
-          <div>
-            <button onClick={handleViewAttendance}>{buttonmessage}</button>
-          </div>
+          
         </div>
       
-      ) :   (<div className="login">
+    <div className="login">
         <Link to="/login"  className="login_button">
           Login
         </Link>
-        </div>
-      )}
-     
-      {attendancekey && (
-        <div>
-          <AttendanceDisplay email={location.state.email} />
-        </div>
-      )}
-
+        </div>  
+         
+    
       <section>
+      <div>Welcome to AMS</div>
+         
         <div className="welcome-content">
           <div className="text-content">
             <p className="welcome">

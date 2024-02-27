@@ -39,9 +39,9 @@ const CourseDetails = () => {
       <h2>Update Course Details</h2>
       <form onSubmit={handleCourseDetails}>
         <div>
-          <label>
+          <label className="checkbox">
             Does this course contain a Laboratory?
-            <input className="checkbox"
+            <input 
               type="checkbox"
               checked={isLab}
               onChange={(e) => setIsLab(e.target.checked)}
