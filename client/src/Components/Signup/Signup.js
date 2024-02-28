@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Signup.css";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Signup = () => {
@@ -20,45 +20,56 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  useEffect(()=> {
+  useEffect(() => {
     handleLoadFormData();
   }, []);
 
-  const handleLoadFormData = async() => {
-     const response = await axios.get(`https://textstrict-app.onrender.com/course-details?key=0`);
-     if (response.data.key === 0) {
+  const handleLoadFormData = async () => {
+    const response = await axios.get(
+      `https://textstrict-app.onrender.com/course-details?key=0`
+    );
+    if (response.data.key === 0) {
       console.log("unknown error server down");
       setMessages("please try again later");
-     } else {
-          const courseDetails = response.data.staffDetails;
-          console.log(courseDetails);
-         setCounsellors(courseDetails);
-     }
-  }
+    } else {
+      const courseDetails = response.data.staffDetails;
+      console.log(courseDetails);
+      setCounsellors(courseDetails);
+    }
+  };
 
   const handleSignUp = async (event) => {
     event.preventDefault();
     //navigate('/staff', {state:{email, key:3}})
     setMessages("Loading...");
 
-    if(email.endsWith('.is21@rvce.edu.in') || email.endsWith('.is22@rvce.edu.in')) setIsStudent(true);
+    if (
+      email.endsWith(".is21@rvce.edu.in") ||
+      email.endsWith(".is22@rvce.edu.in")
+    )
+      setIsStudent(true);
     else setIsStudent(false);
 
     if (!authenticated) {
       try {
         const key = 1;
-        const response = await axios.post("https://textstrict-app.onrender.com/signup", {
-          email,
-          key,
-        });
+        const response = await axios.post(
+          "http://localhost:7800/signup",
+          {
+            email,
+            key,
+          }
+        );
 
         if (response.data.key === 1) {
           setAuthenticated(true);
           setMessages("Please enter the OTP sent to your mail id");
-        } else if (response.data.key === 2) {
+        } else if (response.data.key === 0) {
           setMessages("User already exists, please sign in");
+        } else if (response.data.key == 2) {
+          setMessages("entered otp doesn't match, enter the right one");
         } else {
-          setMessages("Something went wrong");
+          setMessages("something went wrong");
         }
       } catch (error) {
         console.log("Error while signing up: ", error.message);
@@ -66,37 +77,43 @@ const Signup = () => {
     } else {
       if (isStudent) {
         try {
-          const response = await axios.post("https://textstrict-app.onrender.com/signup", {
-            email,
-            key: 2,
-            password,
-            usn,
-            Name,
-            Counsellor,
-            batch,
-            OTP,
-          });
+          const response = await axios.post(
+            "http://localhost:7800/signup",
+            {
+              email,
+              key: 2,
+              password,
+              usn,
+              Name,
+              Counsellor,
+              batch,
+              OTP,
+            }
+          );
 
           if (response.data.key) {
             console.log("Sending", email, password);
-            navigate("/student", { state: { email} });
+            navigate("/student", { state: { email } });
           }
         } catch (error) {
           console.log("Error while signing up: ", error.message);
         }
       } else {
         try {
-          const response = await axios.post("https://textstrict-app.onrender.com/signup", {
-            email,
-            key: 3,
-            password,
-            Name,
-            OTP,
-          });
+          const response = await axios.post(
+            "https://textstrict-app.onrender.com/signup",
+            {
+              email,
+              key: 3,
+              password,
+              Name,
+              OTP,
+            }
+          );
 
           if (response.data.key === 1) {
             console.log("Sending", email, password);
-            navigate("/staff", { state: { email} });
+            navigate("/staff", { state: { email } });
           } else if (response.data.key === 2) {
             setMessages(response.data.message);
           }
@@ -110,7 +127,7 @@ const Signup = () => {
   return (
     <div className="login-main-container">
       <div className="login-hero">
-        Signup for AMS
+        <h1 className="heading-signup-container"> Signup for AMS</h1>
         <h4>{messages}</h4>
         <form onSubmit={handleSignUp}>
           {/* Your form inputs go here */}
@@ -155,11 +172,11 @@ const Signup = () => {
 
           {authenticated && isStudent && (
             <input
-            type="Number"
-            placeholder="enter your lab batch"
-            value={batch}
-            onChange={(e) => setBatch(e.target.value)}
-          />
+              type="Number"
+              placeholder="enter your lab batch"
+              value={batch}
+              onChange={(e) => setBatch(e.target.value)}
+            />
           )}
 
           {authenticated && isStudent && (
@@ -170,9 +187,9 @@ const Signup = () => {
               <option value="" disabled>
                 Select counsellor
               </option>
-              {counsellors.map((counsellors_, index) => (
-                <option key={index} value={counsellors_}>
-                  {counsellors_.counsellor}
+              {counsellors.map((counsellorObj, index) => (
+                <option key={index} value={counsellorObj.counsellor}>
+                  {counsellorObj.counsellor}
                 </option>
               ))}
             </select>

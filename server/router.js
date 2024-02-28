@@ -79,6 +79,7 @@ const handleUserSignup = async (req, res) => {
       }
       if (user) {
         // If user already exists, send a response indicating that
+        console.log("i should be here");
         return res.send({
           message: "User already exists. Please sign in instead",
           key: 0,
@@ -93,7 +94,7 @@ const handleUserSignup = async (req, res) => {
         .status(200)
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else if (key == 2) {
-      const { email, Name, counsellorNumber, OTP, password, usn, batch } =
+      const { email, Name, Counsellor, OTP, password, usn, batch } =
         req.body;
 
       // Handle user registration and OTP validation
@@ -121,9 +122,13 @@ const handleUserSignup = async (req, res) => {
       await newUser.save();
 
       const id = parseInt(usn.substring(usn.length - 3), 10);
-      const query =
+      connection.query('select staff_id from staff where staff_name = ?', [Counsellor], async (error, results) => {
+        if (error) console.log("error while finding staff_id from staff_name",error);
+        else {
+          console.log("staff_id that was retrieved was ", results);
+          const query =
         "insert into students(student_id, student_name, usn, student_email, batch, staff_id) values (?, ?, ?, ?, ?, ?)";
-      const values = [id, Name, usn, email, batch, counsellorNumber];
+      const values = [id, Name, usn, email, batch, results[0].staff_id];
 
       connection.query(query, values, (error, result) => {
         if (error) {
@@ -136,6 +141,8 @@ const handleUserSignup = async (req, res) => {
       // Complete this to save users in students table;
       await OTPModel.findOneAndDelete({ email });
       res.status(200).send({ message: "User saved successfully", key: 1 });
+        }
+      })
     } else {
       const { Name, password, OTP, email } = req.body;
 
@@ -563,7 +570,7 @@ const handleFetchCourseDetails = async (req, res) => {
     try {
       // Query to fetch staff details
       const staffQuery =
-        "SELECT staff_name as counsellor FROM staff where counsellor_number not like 0";
+        "SELECT staff_name as counsellor, staff_id as id FROM staff where counsellor_number not like 0";
       connection.query(staffQuery, (staffError, staffResults) => {
         if (staffError) {
           console.error("Error fetching staff details:", staffError);

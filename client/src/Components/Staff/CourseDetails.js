@@ -36,7 +36,7 @@ const CourseDetails = () => {
 
   return (
     <div className="course-details-container">
-      <h2>Update Course Details</h2>
+      <h2>Update Course Details for 5th semester ISE</h2>
       <form onSubmit={handleCourseDetails}>
         <div>
           <label className="checkbox">
@@ -75,7 +75,7 @@ const CourseDetails = () => {
           />
         </div>
         <div>
-          <label>Total number of credits for this course:</label>
+          <label>Total number of credits for this course, 0 if it doesn't apply</label>
           <input
             type="number"
             value={credits}

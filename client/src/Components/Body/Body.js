@@ -18,7 +18,7 @@ const Body = () => {
       </div>
 
       <section>
-        <div>Welcome to AMS</div>
+        <div className="heading-body-container">Welcome to AMS</div>
 
         <div className="welcome-content">
           <div className="text-content">
@@ -44,7 +44,7 @@ const Body = () => {
             <li>User-Friendly Interface for Both Students and Staff</li>
             <li>Leave Management with Easy Request Submission</li>
           </ul>
-          <div className="bouncing-text">I'll add some effect here</div>
+          {/* <div className="bouncing-text">I'll add some effect here</div> */}
         </div>
       </section>
     </div>

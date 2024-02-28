@@ -1,5 +1,6 @@
 /* Header.css */
 .header-container {
+  margin-bottom: 3rem;
     text-align: center;
     padding: 10px 20px;
     background-color: #05386b; /* Change to your preferred background color */

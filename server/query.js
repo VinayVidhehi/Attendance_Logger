@@ -31,7 +31,8 @@ connection.connect((err) => {
 
 // Define a route handler
 app.get('/deleteCourse', (req, res) => {
-  const query = 'select * from students'
+  const query = `delete from students
+  `
   connection.query(query, (error, result) => {
     if (error) {
       console.log("Error deleting records:", error);
