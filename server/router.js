@@ -280,6 +280,7 @@ const attendanceUpdateHandler = (date,day,course,attendance) => {
     })
   })
 }
+
 const getStudentStrength = () => {
   return new Promise((resolve, reject) => {
     connection.query("SELECT COUNT(student_email) AS count FROM students", (error, result) => {
@@ -338,19 +339,19 @@ const findFirstIndex = (count, status, studentStrength) => {
 
 const getStudentAttendance = async (req, res) => {
   const email = req.query.email;
-
+  console.log("here i am");
   connection.query("select * from course_attendance", (error, results) => {
     if (error) {
       console.log(error);
     } else {
       console.log(results);
   
-      connection.query("select student_id as id from students where student_email=?", [email], (error, studentId) => {
+      connection.query("select student_id as id, student_name as name from students where student_email=?", [email], (error, studentId) => {
         if (error) {
           console.log(error);
         } else {
           const attendance = [];
-  
+          console.log("student id is", studentId);
           results.forEach((eachDay) => {
             const status = eachDay.attendance[studentId[0].id];
             const date = eachDay.date;
@@ -358,7 +359,7 @@ const getStudentAttendance = async (req, res) => {
           });
   
           console.log("Attendance for student with email", email, ":", attendance);
-          res.json({message:"succesfully fetched attendance", attendance});
+          res.json({message:"succesfully fetched attendance", attendance, name:studentId[0].name});
         }
       });
     }
@@ -588,6 +589,17 @@ const handleFetchCourseDetails = async (req, res) => {
   }
 };
 
+const checkCounsellor = async(req, res) => {
+  const {email} = req.params;
+  const response = await User.findOne({email});
+  console.log(response);
+  if(response.isCounsellor == true) {
+    res.json({message:"counsellor", key:1})
+  } else {
+    res.json({message:"not a counsellor", key:0})
+  }
+}
+
 module.exports = {
   handleUserLogin,
   handleFetchCourseDetails,
@@ -595,6 +607,7 @@ module.exports = {
   attendanceUpdate,
   getStudentAttendance,
   getStaffAttendance,
+  checkCounsellor,
   handleCourseDetails,
 };
 

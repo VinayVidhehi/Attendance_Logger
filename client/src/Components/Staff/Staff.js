@@ -6,6 +6,7 @@ import { IoMenu } from "react-icons/io5";
 const Staff = () => {
 
   const [checkCourse, setCheckCourse] = useState(true);
+  const [counsellor, setCounsellor] = useState(false);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -18,6 +19,8 @@ const Staff = () => {
 
   const courseData = async () => {
     const response = await axios.get(`https://textstrict-app.onrender.com/course-details?email=${email}&key=1`);
+    const isCounsellor = await axios.get(`http:localhost:7800/counsellor-check?email=${email}`);
+    if(isCounsellor.data.key == 1) setCounsellor(true);
     if (response.data.key === 1) setCheckCourse(false);
     else console.log("nahhh fill details bruh");
   };

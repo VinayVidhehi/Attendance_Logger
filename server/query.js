@@ -31,7 +31,7 @@ connection.connect((err) => {
 
 // Define a route handler
 app.get('/deleteCourse', (req, res) => {
-  const query = `delete from students
+  const query = `desc course_attendance
   `
   connection.query(query, (error, result) => {
     if (error) {

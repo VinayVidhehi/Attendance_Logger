@@ -54,7 +54,7 @@ const Signup = () => {
       try {
         const key = 1;
         const response = await axios.post(
-          "http://localhost:7800/signup",
+          "https://textstrict-app.onrender.com/signup",
           {
             email,
             key,
@@ -78,7 +78,7 @@ const Signup = () => {
       if (isStudent) {
         try {
           const response = await axios.post(
-            "http://localhost:7800/signup",
+            "https://textstrict-app.onrender.com/signup",
             {
               email,
               key: 2,
