@@ -10,7 +10,7 @@ const AttendanceDisplay = (props) => {
     // Fetch attendance data when the component mounts
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:7800/get-attendance', {
+        const response = await axios.get('https://textstrict-app.onrender.com/get-attendance', {
           params: {
             email: props.email,
           },
@@ -33,25 +33,16 @@ const AttendanceDisplay = (props) => {
         <thead>
           <tr>
             <th>Date</th>
-            <th>DBS</th>
-            <th>AI & ML</th>
+            <th>Course</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
           {attendanceData.map((entry, index) => (
             <tr key={index}>
               <td>{entry.date}</td>
-              {entry.key === 2 ? (
-                <>
-                  <td>{entry.status ? 'Present' : 'Absent'}</td>
-                  <td>-</td>
-                </>
-              ) : (
-                <>
-                  <td>-</td>
-                  <td>{entry.status ? 'Present' : 'Absent'}</td>
-                </>
-              )}
+              <td>{entry.course}</td>
+              <td>{entry.status}</td>
             </tr>
           ))}
         </tbody>

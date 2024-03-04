@@ -1,9 +1,20 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import performOCR from "./OCRUtil";
+import axios from 'axios';
 
 const PerformOCR = () => {
   const [image, setImage] = useState(null);
   const [extractedText, setExtractedText] = useState("");
+
+  const location = useLocation();
+  const email = location.state.email;
+
+  console.log("email in ocr is", email);
+
+  const submitOCRDetails = async() => {
+    const response = axios.post('https://textstrict-app.onrender.com/perform-ocr',{extractedText})
+  }
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -55,11 +66,12 @@ const PerformOCR = () => {
     <div>
       <div></div>
       <input type="file" accept="image/*" onChange={handleImageChange} />
-      <button onClick={handleOCR}>upload</button>
+      <button onClick={handleOCR}>convert</button>
       <div>
         <h2>Extracted Text:</h2>
         <p>{extractedText}</p>
       </div>
+      <button onClick={submitOCRDetails}>Upload</button>
     </div>
   );
 };

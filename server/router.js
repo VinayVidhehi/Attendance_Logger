@@ -353,9 +353,21 @@ const getStudentAttendance = async (req, res) => {
           const attendance = [];
           console.log("student id is", studentId);
           results.forEach((eachDay) => {
-            const status = eachDay.attendance[studentId[0].id];
-            const date = eachDay.date;
-            attendance.push({ date, status });
+            const checkPresence = eachDay.attendance[studentId[0].id];;
+            if(checkPresence == 0) {
+              const status = 'absent';
+              const date = eachDay.date;
+              attendance.push({ date, status, course:eachDay.course_id });
+            } else if(checkPresence == 1) {
+              const status = 'present';
+              const date = eachDay.date;
+              attendance.push({ date, status, course:eachDay.course_id });
+            } else if(checkPresence == 2) {
+              const status = 'No Lab taken';
+              const date = eachDay.date;
+              attendance.push({ date, status, course:eachDay.course_id });
+            }
+            
           });
   
           console.log("Attendance for student with email", email, ":", attendance);
@@ -364,10 +376,6 @@ const getStudentAttendance = async (req, res) => {
       });
     }
   });
-  
-
-  
-  
 };
 
 const handleUserLogin = async (req, res) => {
@@ -590,14 +598,19 @@ const handleFetchCourseDetails = async (req, res) => {
 };
 
 const checkCounsellor = async(req, res) => {
-  const {email} = req.params;
+  const {email} = req.query;
   const response = await User.findOne({email});
-  console.log(response);
   if(response.isCounsellor == true) {
     res.json({message:"counsellor", key:1})
   } else {
     res.json({message:"not a counsellor", key:0})
   }
+}
+
+const handlePerformOCR = async(req, res) => {
+  const {extractedText} = req.body;
+  console.log("extracted text", extractedText);
+  res.json({message:"something came here"});
 }
 
 module.exports = {
@@ -609,6 +622,7 @@ module.exports = {
   getStaffAttendance,
   checkCounsellor,
   handleCourseDetails,
+  handlePerformOCR,
 };
 
 /*
