@@ -94,8 +94,7 @@ const handleUserSignup = async (req, res) => {
         .status(200)
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else if (key == 2) {
-      const { email, Name, Counsellor, OTP, password, usn, batch } =
-        req.body;
+      const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
 
       // Handle user registration and OTP validation
       if (!OTP) {
@@ -122,27 +121,34 @@ const handleUserSignup = async (req, res) => {
       await newUser.save();
 
       const id = parseInt(usn.substring(usn.length - 3), 10);
-      connection.query('select staff_id from staff where staff_name = ?', [Counsellor], async (error, results) => {
-        if (error) console.log("error while finding staff_id from staff_name",error);
-        else {
-          console.log("staff_id that was retrieved was ", results);
-          const query =
-        "insert into students(student_id, student_name, usn, student_email, batch, staff_id) values (?, ?, ?, ?, ?, ?)";
-      const values = [id, Name, usn, email, batch, results[0].staff_id];
+      connection.query(
+        "select staff_id from staff where staff_name = ?",
+        [Counsellor],
+        async (error, results) => {
+          if (error)
+            console.log("error while finding staff_id from staff_name", error);
+          else {
+            console.log("staff_id that was retrieved was ", results);
+            const query =
+              "insert into students(student_id, student_name, usn, student_email, batch, staff_id) values (?, ?, ?, ?, ?, ?)";
+            const values = [id, Name, usn, email, batch, results[0].staff_id];
 
-      connection.query(query, values, (error, result) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(result);
-        }
-      });
+            connection.query(query, values, (error, result) => {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log(result);
+              }
+            });
 
-      // Complete this to save users in students table;
-      await OTPModel.findOneAndDelete({ email });
-      res.status(200).send({ message: "User saved successfully", key: 1 });
+            // Complete this to save users in students table;
+            await OTPModel.findOneAndDelete({ email });
+            res
+              .status(200)
+              .send({ message: "User saved successfully", key: 1 });
+          }
         }
-      })
+      );
     } else {
       const { Name, password, OTP, email } = req.body;
 
@@ -235,16 +241,20 @@ const attendanceUpdate = async (req, res) => {
 
     incomingIDs.map((id) => {
       status[id] = 1;
-    })
+    });
 
     // Process batches
     let count = 1;
     while (count < studentStrength) {
       console.log("here status isss like this ", status, incomingIDs);
-      console.log("count now is ",count );
-      const batchResult = await processBatchQuery(count, status, studentStrength);
+      console.log("count now is ", count);
+      const batchResult = await processBatchQuery(
+        count,
+        status,
+        studentStrength
+      );
       console.log(batchResult);
-      if(batchResult != 1) {
+      if (batchResult != 1) {
         batchResult.forEach((ids) => {
           if (status[ids.id] == 2) status[ids.id] = 0;
           count = ids.id;
@@ -256,10 +266,20 @@ const attendanceUpdate = async (req, res) => {
 
     // Convert the status array to a string
     const statusString = status.join("");
-    console.log("Status string now is", statusString, " and status array is this ", status);
+    console.log(
+      "Status string now is",
+      statusString,
+      " and status array is this ",
+      status
+    );
 
-    const updateAttendance = await attendanceUpdateHandler(currentDate, currentDay, courseId, statusString);
-    console.log("status of updated attendance",updateAttendance);
+    const updateAttendance = await attendanceUpdateHandler(
+      currentDate,
+      currentDay,
+      courseId,
+      statusString
+    );
+    console.log("status of updated attendance", updateAttendance);
 
     res.json({ message: "Hello, this is your Express server with CORS!\n" });
   } catch (error) {
@@ -269,28 +289,34 @@ const attendanceUpdate = async (req, res) => {
 };
 
 // Function to get student strength
-const attendanceUpdateHandler = (date,day,course,attendance) => {
+const attendanceUpdateHandler = (date, day, course, attendance) => {
   return new Promise((resolve, reject) => {
-    connection.query(`insert into course_attendance (date, day, course_id, attendance) values (?,?,?,?)`, [date,day,course,attendance], (error, result) => {
-      if(error) {
-        console.log("error while uploding attendance",error);
-        reject(error);
+    connection.query(
+      `insert into course_attendance (date, day, course_id, attendance) values (?,?,?,?)`,
+      [date, day, course, attendance],
+      (error, result) => {
+        if (error) {
+          console.log("error while uploding attendance", error);
+          reject(error);
+        } else resolve(result);
       }
-      else resolve(result);
-    })
-  })
-}
+    );
+  });
+};
 
 const getStudentStrength = () => {
   return new Promise((resolve, reject) => {
-    connection.query("SELECT COUNT(student_email) AS count FROM students", (error, result) => {
-      if (error) {
-        console.log("Error at student strength", error);
-        reject(error);
-      } else {
-        resolve(result[0].count + 1);
+    connection.query(
+      "SELECT COUNT(student_email) AS count FROM students",
+      (error, result) => {
+        if (error) {
+          console.log("Error at student strength", error);
+          reject(error);
+        } else {
+          resolve(result[0].count + 1);
+        }
       }
-    });
+    );
   });
 };
 
@@ -325,8 +351,8 @@ const processBatchQuery = (count, status, studentStrength) => {
 // Function to find first index
 const findFirstIndex = (count, status, studentStrength) => {
   let index = count;
-  console.log('am i here',count,status,studentStrength)
-  while (index < studentStrength-1) {
+  console.log("am i here", count, status, studentStrength);
+  while (index < studentStrength - 1) {
     if (status[index] == 1) {
       console.log("Returning index", index);
       return index;
@@ -345,35 +371,47 @@ const getStudentAttendance = async (req, res) => {
       console.log(error);
     } else {
       console.log(results);
-  
-      connection.query("select student_id as id, student_name as name from students where student_email=?", [email], (error, studentId) => {
-        if (error) {
-          console.log(error);
-        } else {
-          const attendance = [];
-          console.log("student id is", studentId);
-          results.forEach((eachDay) => {
-            const checkPresence = eachDay.attendance[studentId[0].id];;
-            if(checkPresence == 0) {
-              const status = 'absent';
-              const date = eachDay.date;
-              attendance.push({ date, status, course:eachDay.course_id });
-            } else if(checkPresence == 1) {
-              const status = 'present';
-              const date = eachDay.date;
-              attendance.push({ date, status, course:eachDay.course_id });
-            } else if(checkPresence == 2) {
-              const status = 'No Lab taken';
-              const date = eachDay.date;
-              attendance.push({ date, status, course:eachDay.course_id });
-            }
-            
-          });
-  
-          console.log("Attendance for student with email", email, ":", attendance);
-          res.json({message:"succesfully fetched attendance", attendance, name:studentId[0].name});
+
+      connection.query(
+        "select student_id as id, student_name as name from students where student_email=?",
+        [email],
+        (error, studentId) => {
+          if (error) {
+            console.log(error);
+          } else {
+            const attendance = [];
+            console.log("student id is", studentId);
+            results.forEach((eachDay) => {
+              const checkPresence = eachDay.attendance[studentId[0].id];
+              if (checkPresence == 0) {
+                const status = "absent";
+                const date = eachDay.date;
+                attendance.push({ date, status, course: eachDay.course_id });
+              } else if (checkPresence == 1) {
+                const status = "present";
+                const date = eachDay.date;
+                attendance.push({ date, status, course: eachDay.course_id });
+              } else if (checkPresence == 2) {
+                const status = "No Lab taken";
+                const date = eachDay.date;
+                attendance.push({ date, status, course: eachDay.course_id });
+              }
+            });
+
+            console.log(
+              "Attendance for student with email",
+              email,
+              ":",
+              attendance
+            );
+            res.json({
+              message: "succesfully fetched attendance",
+              attendance,
+              name: studentId[0].name,
+            });
+          }
         }
-      });
+      );
     }
   });
 };
@@ -413,51 +451,41 @@ const getStaffAttendance = async (req, res) => {
   connection.query(
     "SELECT course_id FROM staff WHERE staff_email = ?",
     [email],
-    (error, courseIdId) => {
+    (error, courseId) => {
       if (error) {
         console.log(error);
         res.status(500).json({ error: "Internal Server Error" });
       } else {
-        console.log("courseId found is ", courseIdId);
-        const courseId = "course";
-        const finalCourseId = courseId.concat(courseIdId[0].course_id);
-        console.log(finalCourseId, typeof finalCourseId);
-        const query = `SELECT ${finalCourseId}, date FROM course_attendance;`;
+        console.log("courseId found is ", courseId);
 
-        connection.query(query, async (err, results) => {
-          if (err) {
-            console.error(
-              "Error fetching attendance from database:",
-              err.message
-            );
-            res.status(500).json({ error: "Internal Server Error" });
-          } else {
-            console.log("Attendance fetched from database:", results);
-
-            // Query the students table to get the id and name of all students
-            const studentsQuery = "SELECT id, name FROM students;";
-
-            connection.query(studentsQuery, (studentsErr, studentsResults) => {
-              if (studentsErr) {
-                console.error(
-                  "Error fetching student data from database:",
-                  studentsErr.message
-                );
-                res.status(500).json({ error: "Internal Server Error" });
-              } else {
-                console.log(
-                  "Student data fetched from database:",
-                  studentsResults
-                );
-                res.status(200).json({
-                  key: 1,
-                  attendance: results,
-                  students: studentsResults,
-                });
-              }
-            });
+        const course = `'${courseId[0].course_id}'`;
+        console.log("god is ", course);
+        connection.query(
+          `select attendance, date from course_attendance where course_id = ?`,
+          [course],
+          (error, attendanceString) => {
+            if (error)
+              console.log("error while fetching attendance string", error);
+            else {
+              console.log("here is the attendance", attendanceString);
+              connection.query(
+                "select student_id, student_name from students",
+                (error, students) => {
+                  if (error)
+                    console.log("error while fetching students data for attendance",error);
+                  else {
+                    const staffAttendance = {
+                      students,
+                      attendanceString,
+                    }
+                    console.log("hurray students data sent succesfully",staffAttendance);
+                    res.json({ message: "hurray" , attendance:staffAttendance, key:1});
+                  }
+                }
+              );
+            }
           }
-        });
+        );
       }
     }
   );
@@ -597,21 +625,22 @@ const handleFetchCourseDetails = async (req, res) => {
   }
 };
 
-const checkCounsellor = async(req, res) => {
-  const {email} = req.query;
-  const response = await User.findOne({email});
-  if(response.isCounsellor == true) {
-    res.json({message:"counsellor", key:1})
+const checkCounsellor = async (req, res) => {
+  const { email } = req.query;
+  const response = await User.findOne({ email });
+  if (response.isCounsellor == true) {
+    res.json({ message: "counsellor", key: 1 });
   } else {
-    res.json({message:"not a counsellor", key:0})
+    res.json({ message: "not a counsellor", key: 0 });
   }
-}
+};
 
-const handlePerformOCR = async(req, res) => {
-  const {extractedText} = req.body;
+const handlePerformOCR = async (req, res) => {
+  const { extractedText } = req.body;
   console.log("extracted text", extractedText);
-  res.json({message:"something came here"});
-}
+
+  res.json({ message: "something came here" });
+};
 
 module.exports = {
   handleUserLogin,

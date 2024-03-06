@@ -3,13 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Staff.css";
 import { IoMenu } from "react-icons/io5";
-import PerformOCR from '../Body/OCR';
 
 
 const Staff = () => {
 
   const [checkCourse, setCheckCourse] = useState(true);
   const [counsellor, setCounsellor] = useState(false);
+  const [attendance, setAttendance] = useState(false);
+  const [studentAttendance, setStudentAttendance] = useState("");
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -23,6 +24,12 @@ const Staff = () => {
   const courseData = async () => {
     const isCounsellor = await axios.get(`https://textstrict-app.onrender.com/counsellor-check?email=${email}`);
     const response = await axios.get(`https://textstrict-app.onrender.com/course-details?email=${email}&key=1`);
+    const staffAttendance = await axios.get(`https://textstrict-app.onrender.com/attendance-staffview?email=${email}`);
+    if(staffAttendance.data.key == 1){
+      setStudentAttendance(staffAttendance.data.attendance)
+      setAttendance(true);
+      console.log("staffview", attendance, staffAttendance.data.attendance)
+    }
     if(isCounsellor.data.key == 1) setCounsellor(true);
     if (response.data.key === 1) setCheckCourse(false);
     else console.log("nahhh fill details bruh");
@@ -56,16 +63,21 @@ const Staff = () => {
           </button>
           {isDropdownOpen && (
             <div className="dropdown-content">
-             <button onClick={CourseDetails}>Course Details</button>
+             <button onClick = {CourseDetails}>Course Details</button>
             </div>
           )}
         </div>
         )}
       </div>
+      <div>
       {counsellor && <div>
         <h2>click here to upload leave document</h2>
             <button onClick={redirectToOCR}>OCR</button>
             </div>}
+      </div>
+      <div>
+        {attendance &&  <button onClick={() => navigate('/staff/attendance-staffview', {state:{attendance:studentAttendance}})}>view attendance</button>}
+      </div>
     </div>
   );
 };

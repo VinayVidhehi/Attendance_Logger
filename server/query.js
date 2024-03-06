@@ -104,7 +104,11 @@ app.get('/deleteCourse', (req, res) => {
       (60, 'Hari', 'hari@example.com', '1RV21IS060', '3', '2');
   
   `;
-  connection.query(`select * from staff`, (error, result) => {
+  const sub = "'21AI52'";
+  console.log("ooo", sub)
+  connection.query(`SELECT * FROM staff 
+
+  `,[sub], (error, result) => {
     if (error) {
       console.log("Error deleting records:", error);
       res.status(500).json({ error: "Internal Server Error" });

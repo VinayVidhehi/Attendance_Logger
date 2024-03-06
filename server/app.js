@@ -29,3 +29,5 @@ app.post('/perform-ocr', handlePerformOCR);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+//attendance-staff
