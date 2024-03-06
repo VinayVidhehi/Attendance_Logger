@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { handleUserLogin, handleUserSignup, attendanceUpdate, getStudentAttendance, getStaffAttendance, handleCourseDetails,  handleFetchCourseDetails, checkCounsellor , handlePerformOCR} = require('./router');
+const { handleUserLogin, handleUserSignup, attendanceUpdate, getStudentAttendance, getStaffAttendance, fetchLeaveRecord, handleCourseDetails,  handleFetchCourseDetails, checkCounsellor , handlePerformOCR} = require('./router');
 
 const app = express();
 const PORT = 7800;
@@ -18,7 +18,9 @@ app.get('/attendance', attendanceUpdate);
 app.get('/get-attendance', getStudentAttendance);
 app.get('/attendance-staffview', getStaffAttendance);
 app.get('/course-details', handleFetchCourseDetails);
-app.get('/counsellor-check', checkCounsellor)
+app.get('/counsellor-check', checkCounsellor);
+app.get('/leave-records', fetchLeaveRecord);
+
 
 app.post('/signup', handleUserSignup);
 app.post('/login', handleUserLogin);
@@ -30,4 +32,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-//attendance-staff
+//attendance-staff//leave-records

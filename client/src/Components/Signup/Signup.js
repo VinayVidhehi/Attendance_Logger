@@ -26,7 +26,7 @@ const Signup = () => {
 
   const handleLoadFormData = async () => {
     const response = await axios.get(
-      `https://textstrict-app.onrender.com/course-details?key=0`
+      `http://localhost:7800/course-details?key=0`
     );
     if (response.data.key === 0) {
       console.log("unknown error server down");
@@ -54,7 +54,7 @@ const Signup = () => {
       try {
         const key = 1;
         const response = await axios.post(
-          "https://textstrict-app.onrender.com/signup",
+          "http://localhost:7800/signup",
           {
             email,
             key,
@@ -78,7 +78,7 @@ const Signup = () => {
       if (isStudent) {
         try {
           const response = await axios.post(
-            "https://textstrict-app.onrender.com/signup",
+            "http://localhost:7800/signup",
             {
               email,
               key: 2,
@@ -101,7 +101,7 @@ const Signup = () => {
       } else {
         try {
           const response = await axios.post(
-            "https://textstrict-app.onrender.com/signup",
+            "http://localhost:7800/signup",
             {
               email,
               key: 3,

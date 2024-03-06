@@ -10,6 +10,7 @@ import CourseDetails from './Components/Staff/CourseDetails';
 import Student from './Components/Student/Student';
 import PerformOCR from './Components/Body/OCR';
 import AttandanceStaffview from './Components/Staff/AttandanceStaffview';
+import CertificateDisplay from './Components/Staff/CertificateDisplay';
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
         <Route path='/staff/attendance-staffview' element={<AttandanceStaffview />} />
         <Route path='/' element={<Body />} />
         <Route path='/staff/course-details' element={<CourseDetails />} />
+        <Route path='/staff/certificate-display' element={<CertificateDisplay />} />
         <Route path='/staff/OCR' element={<PerformOCR />} />
       </Routes>
       <Footer />

@@ -21,7 +21,7 @@ const Student = () => {
       <div>
         <div>Welcome to AMS</div>
         <div>
-          <button onClick={handleViewAttendance}>{buttonmessage}</button>
+          <button style={{ backgroundColor: 'navy', fontSize: 'medium'}} onClick={handleViewAttendance}>{buttonmessage}</button>
         </div>
       </div>
 

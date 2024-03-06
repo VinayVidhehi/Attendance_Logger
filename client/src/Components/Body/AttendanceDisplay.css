@@ -3,6 +3,17 @@
     margin: 20px;
   }
   
+.attendancedisplay-option-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.attendance-percentage-container {
+  display: flex;
+  flex-direction: row;
+}
+
   table {
     width: 100%;
     border-collapse: collapse;
@@ -13,6 +24,17 @@
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+  }
+
+  select {
+    height: 3rem;
+    margin: auto;
+  }
+
+  button {
+    background-color: black;
+    padding: 0.3rem 0.5rem;
+    border-radius: 10%;
   }
   
   th {

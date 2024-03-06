@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const PerformOCR = () => {
   const [image, setImage] = useState(null);
-  const [extractedText, setExtractedText] = useState("");
+  const [details, setDetails] = useState(null);
 
   const location = useLocation();
   const email = location.state.email;
@@ -13,7 +13,7 @@ const PerformOCR = () => {
   console.log("email in ocr is", email);
 
   const submitOCRDetails = async() => {
-    const response = axios.post('https://textstrict-app.onrender.com/perform-ocr',{extractedText})
+    const response = axios.post('http://localhost:7800/perform-ocr',{details})
   }
 
   const handleImageChange = (event) => {
@@ -52,9 +52,16 @@ const PerformOCR = () => {
       const toDateMatch = text.match(toDatePattern);
       const toDateText = toDateMatch ? toDateMatch[1] : 'No "to" date found';
       // Set the extracted text
-      setExtractedText(
-        `USN: ${usnText}\nEmail: ${emailText}\nfrom: ${fromDateText}\nto: ${toDateText}`
-      );
+      const extractedDetails = {
+        usn: usnText,
+        email: emailText,
+        fromDate: fromDateText,
+        toDate: toDateText,
+        reason:text,
+      };
+
+      setDetails(extractedDetails);
+      console.log("details are", details);
 
       //here it should post request using axios to the server sending all four extracted usn email from and date
     } catch (error) {
@@ -66,12 +73,15 @@ const PerformOCR = () => {
     <div>
       <div></div>
       <input type="file" accept="image/*" onChange={handleImageChange} />
-      <button onClick={handleOCR}>convert</button>
-      <div>
+      <button style={{ backgroundColor: 'navy', fontSize: 'medium'}} onClick={handleOCR}>convert</button>
+      {details != null && <div>
         <h2>Extracted Text:</h2>
-        <p>{extractedText}</p>
-      </div>
-      <button onClick={submitOCRDetails}>Upload</button>
+        <p>{details.email}</p>
+        <p>{details.toDate}</p>
+        <p>{details.fromDate}</p>
+        <p>{details.reason}</p>
+      </div>}
+      <button style={{ backgroundColor: 'navy', fontSize: 'medium'}} onClick={submitOCRDetails}>Upload</button>
     </div>
   );
 };

@@ -105,8 +105,14 @@ app.get('/deleteCourse', (req, res) => {
   
   `;
   const sub = "'21AI52'";
-  console.log("ooo", sub)
-  connection.query(`SELECT * FROM staff 
+
+  connection.query(`INSERT INTO leave_log (student_email, from_date, to_date, reason) VALUES
+  ('aniket.kumar@rvce.edu.in', '2023-12-12', '2023-12-15', 'I was suffering from a severe bout of fever and was advised bed rest by my physician. Attached is the medical certificate for your reference.'),
+  ('divya.sharma@rvce.edu.in', '2023-12-15', '2023-12-18', 'There was an urgent family situation that required my immediate attention and presence. I had to travel out of town to be with my family during this time.'),
+  ('rahul.gupta@rvce.edu.in', '2023-12-18', '2023-12-21', 'I was actively involved in organizing a social welfare event in our community, which required my full-time commitment and attention.'),
+  ('sneha.patel@rvce.edu.in', '2023-12-21', '2023-12-24', 'I participated in a national-level sports competition representing our college. The event spanned multiple days, and I had to be present throughout the duration.'),
+  ('akash.singh@rvce.edu.in', '2023-12-24', '2023-12-27', 'I attended a specialized training program conducted by a renowned industry expert to enhance my skills and knowledge in my field of study.');
+  
 
   `,[sub], (error, result) => {
     if (error) {

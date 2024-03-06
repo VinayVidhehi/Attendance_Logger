@@ -13,6 +13,12 @@
   color: white;
 }
 
+button {
+  background-color: black;
+  padding: 0.3rem 0.5rem;
+  border-radius: 10%;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

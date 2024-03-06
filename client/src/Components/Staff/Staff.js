@@ -22,9 +22,9 @@ const Staff = () => {
   }, []);
 
   const courseData = async () => {
-    const isCounsellor = await axios.get(`https://textstrict-app.onrender.com/counsellor-check?email=${email}`);
-    const response = await axios.get(`https://textstrict-app.onrender.com/course-details?email=${email}&key=1`);
-    const staffAttendance = await axios.get(`https://textstrict-app.onrender.com/attendance-staffview?email=${email}`);
+    const isCounsellor = await axios.get(`http://localhost:7800/counsellor-check?email=${email}`);
+    const response = await axios.get(`http://localhost:7800/course-details?email=${email}&key=1`);
+    const staffAttendance = await axios.get(`http://localhost:7800/attendance-staffview?email=padmashreet@rvce.edu.in`);
     if(staffAttendance.data.key == 1){
       setStudentAttendance(staffAttendance.data.attendance)
       setAttendance(true);
@@ -34,6 +34,13 @@ const Staff = () => {
     if (response.data.key === 1) setCheckCourse(false);
     else console.log("nahhh fill details bruh");
   };
+
+  const handleFetchLeaveRecord = async() => {
+    const response = await axios.get(`http://localhost:7800/leave-records?${email}`);
+    console.log("response is ", response.data.records);
+    const records = response.data.records;
+    navigate('/staff/certificate-display', {state:{records}})
+  }
 
   console.log("counsellor",counsellor)
 
@@ -58,7 +65,7 @@ const Staff = () => {
         {checkCourse && (
           
          <div className="menu-container">
-          <button className="menu-button" onClick={toggleDropdown}>
+          <button className="menu-button"  onClick={toggleDropdown}>
             <IoMenu />
           </button>
           {isDropdownOpen && (
@@ -72,12 +79,15 @@ const Staff = () => {
       <div>
       {counsellor && <div>
         <h2>click here to upload leave document</h2>
-            <button onClick={redirectToOCR}>OCR</button>
+            <button style={{ backgroundColor: 'navy', fontSize: 'medium'}} onClick={redirectToOCR}>OCR</button>
             </div>}
       </div>
       <div>
-        {attendance &&  <button onClick={() => navigate('/staff/attendance-staffview', {state:{attendance:studentAttendance}})}>view attendance</button>}
+        {attendance &&  <button style={{ backgroundColor: 'navy', fontSize: 'medium'}} onClick={() => navigate('/staff/attendance-staffview', {state:{attendance:studentAttendance}})}>view attendance</button>}
       </div>
+     {counsellor &&  <div>
+        <button style={{ backgroundColor: 'navy', fontSize: 'medium'}} onClick={handleFetchLeaveRecord}>fetch record</button>
+      </div>}
     </div>
   );
 };

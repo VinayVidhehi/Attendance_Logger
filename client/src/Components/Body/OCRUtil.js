@@ -7,9 +7,10 @@ const performOCR = (imageFile) => {
     Tesseract.recognize(
       imageFile,
       'eng', // Specify language ('eng' for English)
-      { logger: (info) => console.log(info) }
+      //{ logger: (info) => console.log(info) }
     )
       .then(({ data: { text } }) => {
+        console.log("text is",text);
         resolve(text);
       })
       .catch((error) => {

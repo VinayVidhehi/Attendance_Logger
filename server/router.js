@@ -636,13 +636,38 @@ const checkCounsellor = async (req, res) => {
 };
 
 const handlePerformOCR = async (req, res) => {
-  const { extractedText } = req.body;
-  console.log("extracted text", extractedText);
+  const { details } = req.body;
+  const { email, fromDate, toDate, reason } = details;
 
-  res.json({ message: "something came here" });
+  connection.query(
+    'INSERT INTO leave_log(student_email, from_date, to_date, reason) VALUES (?, ?, ?, ?)',
+    [email, fromDate, toDate, reason],
+    (error, results) => {
+      if (error) {
+        console.log("Error while logging details into leave_log:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        console.log("Results are:", results);
+        res.json({ message: "Successfully logged values", key: 1 });
+      }
+    }
+  );
 };
 
+const fetchLeaveRecord = async(req, res) => {
+  const {email} = req.query;
+  console.log("ddd", email);
+  connection.query('select * from leave_log', (error, records) => {
+    if (error) console.log("error while fetching staff id",error);
+    else {
+      console.log(records);
+       res.json({message:"successfully fetched",records})
+    }
+  })
+}
+
 module.exports = {
+  fetchLeaveRecord,
   handleUserLogin,
   handleFetchCourseDetails,
   handleUserSignup,
