@@ -17,14 +17,25 @@ html, body {width: 100vw; height: 100vh;}
     color: #05386b;
 
   }
-  
+
   .text-content {
     max-width: 100%;
     color: #05386b;
     font-size: 20px;
   }
-
-  
+  ul.featlist {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+  .feat-list{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    font-variant-ligatures: none;
+  }
   
   div {
    
@@ -110,4 +121,28 @@ footer {
   background-color: #f0f0f0; /* Example color */
   padding: 20px;
   text-align: center;
+}
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  width: 300px;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.card h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 16px;
+  color: #666;
 }

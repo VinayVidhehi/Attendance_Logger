@@ -38,13 +38,26 @@ const Body = () => {
       <section className="features">
         <div className="features-section">
           <p className="welcome">Key Features</p>
-          <ul classname="list">
-            <li>Effortless Attendance Tracking</li>
-            <li>Real-time Reporting and Analytics</li>
-            <li>User-Friendly Interface for Both Students and Staff</li>
-            <li>Leave Management with Easy Request Submission</li>
-          </ul>
-          {/* <div className="bouncing-text">I'll add some effect here</div> */}
+          <div className="cards-container">
+  <div className="card">
+    <h3>Effortless Attendance Tracking</h3>
+    <p>Track attendance effortlessly with our user-friendly system.</p>
+  </div>
+  <div className="card">
+    <h3>Real-time Reporting and Analytics</h3>
+    <p>Access real-time reports and analytics to monitor attendance trends.</p>
+  </div>
+  <div className="card">
+    <h3>User-Friendly Interface for Both Students and Staff</h3>
+    <p>Enjoy a simple and intuitive interface designed for everyone.</p>
+  </div>
+  <div className="card">
+    <h3>Leave Management with Easy Request Submission</h3>
+    <p>Submit leave requests easily and manage your schedule efficiently.</p>
+  </div>
+</div>
+
+         
         </div>
       </section>
     </div>
