@@ -17,7 +17,7 @@ const CourseDetails = () => {
   const handleCourseDetails = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:7800/course-details", {
+      const response = await axios.post("https://textstrict-app.onrender.com/course-details", {
         email,
         isLab,
         courseId,
