@@ -13,7 +13,7 @@ const PerformOCR = () => {
   console.log("email in ocr is", email);
 
   const submitOCRDetails = async() => {
-    const response = axios.post('https://textstrict-app.onrender.com/perform-ocr',{details})
+    const response = axios.post('http://localhost:7800/perform-ocr',{details})
   }
 
   const handleImageChange = (event) => {

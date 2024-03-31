@@ -8,12 +8,13 @@ const CertificateDisplay = () => {
     const location = useLocation();
 
     useEffect(() => {
+        console.log(location.state.records);
         setRecords(location.state.records || []); // Ensure records is an array
     }, [location.state.records]);
 
     // Filter records based on the search query
     const filteredRecords = records.filter(record =>
-        record.student_email.toLowerCase().includes(searchQuery.toLowerCase())
+        record && record.email && record.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     // Handle search query changes
@@ -22,31 +23,37 @@ const CertificateDisplay = () => {
     };
 
     return (
-        
         <div>
             <div className='search-container'>
                 {/* Search bar */}
-            <input
-                type="text"
-                placeholder="Search by student email..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-            />
+                <input
+                    type="text"
+                    placeholder="Search by student email..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
             </div>
             <div className="certificate-container">
-            <h1>Certificate of Attendance</h1>
+                <h1>Certificate Display</h1>
            
-            {filteredRecords.length > 0 ? (
-                filteredRecords.map((record, index) => (
-                    <div key={index} className="certificate-record">
-                        <h2>{record.student_email}</h2>
-                        <p>{record.reason}</p>
-                    </div>
-                ))
-            ) : (
-                <p>No records found</p>
-            )}
-        </div>
+                {filteredRecords.length > 0 ? (
+                    filteredRecords.map((record, index) => (
+                        <div key={index} className="certificate-record">
+                            <h2>{record.type === 'medical' ? 'Medical Certificate' : 'Non-Medical Certificate'}</h2>
+                            {record.type === 'medical' ? (
+                                <p>
+                                    Patient Email: {record.email}<br/>
+                                    {record.reason}
+                                </p>
+                            ) : (
+                                <p>{record.reason}</p>
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    <p>No records found</p>
+                )}
+            </div>
         </div>
     );
 };

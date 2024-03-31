@@ -14,11 +14,11 @@ app.use(bodyParser.json());
 
 // MySQL Connection
 const connection = mysql.createConnection({
-  host: 'attendance-logger-spoorthivarumbudi-ddc7.a.aivencloud.com',
-  port: 12226,
-  user: 'avnadmin',
-  password: 'AVNS_aRs9_9YVW7p-mEzvwzx',
-  database: 'defaultdb',
+  host: "mysql-36e54173-mulberrydatabase.a.aivencloud.com",
+  port: 24400,
+  user: "avnadmin",
+  password: "AVNS_PXPi8DwKVq_UOKMdt1m",
+  database: "defaultdb",
 });
 
 connection.connect((err) => {
@@ -106,7 +106,7 @@ app.get('/deleteCourse', (req, res) => {
   `;
   const sub = "'21AI52'";
 
-  connection.query(`select * from staff
+  connection.query(`select * from achievements
 
   `,[sub], (error, result) => {
     if (error) {

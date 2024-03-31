@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
 const saltRounds = 10;
+const axios = require("axios");
 
 const connection = mysql.createConnection({
   host: "attendance-logger-spoorthivarumbudi-ddc7.a.aivencloud.com",
@@ -174,26 +175,17 @@ const handleUserSignup = async (req, res) => {
         });
       }
 
-      connection.query(
-        "select count(*) as count from staff",
-        (countError, count) => {
-          if (countError) console.log("error while counting");
-          else {
-            console.log(count[0].count);
-            const query =
-              "insert into staff(staff_id, staff_name, staff_email) values (?, ?, ?)";
-            const values = [count[0].count, Name, email];
+      const query =
+        "insert into staff( staff_name, staff_email) values ( ?, ?)";
+      const values = [Name, email];
 
-            connection.query(query, values, (error, result) => {
-              if (error) {
-                console.log(error);
-              } else {
-                console.log(result);
-              }
-            });
-          }
+      connection.query(query, values, (error, result) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(result);
         }
-      );
+      });
 
       // Hash the password before storing it
       const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -225,8 +217,9 @@ const attendanceUpdate = async (req, res) => {
   const courseId = req.query.courseId;
   const currentDate = new Date().toISOString().split("T")[0];
 
-  // Get the current day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
-  const currentDay = new Date().getDay();
+  // Get the current day name (e.g., "Sunday", "Monday")
+  const options = { weekday: "long" };
+  const currentDay = new Date().toLocaleDateString("en-US", options);
 
   // Split the incoming comma-separated string into an array of IDs
   const incomingIDs = attendanceString.split(",").map(Number);
@@ -273,14 +266,15 @@ const attendanceUpdate = async (req, res) => {
       status
     );
 
-    const updateAttendance = await attendanceUpdateHandler(
-      currentDate,
-      currentDay,
-      courseId,
-      statusString
-    );
-    console.log("status of updated attendance", updateAttendance);
+    // const updateAttendance = await attendanceUpdateHandler(
+    //   currentDate,
+    //   currentDay,
+    //   courseId,
+    //   statusString
+    // );
+    // console.log("status of updated attendance", updateAttendance);
 
+    // res.json({ message: "Hello, this is your Express server with CORS!\n" });
     res.json({ message: "Hello, this is your Express server with CORS!\n" });
   } catch (error) {
     console.error("Error in attendanceUpdate:", error);
@@ -472,14 +466,24 @@ const getStaffAttendance = async (req, res) => {
                 "select student_id, student_name from students",
                 (error, students) => {
                   if (error)
-                    console.log("error while fetching students data for attendance",error);
+                    console.log(
+                      "error while fetching students data for attendance",
+                      error
+                    );
                   else {
                     const staffAttendance = {
                       students,
                       attendanceString,
-                    }
-                    console.log("hurray students data sent succesfully",staffAttendance);
-                    res.json({ message: "hurray" , attendance:staffAttendance, key:1});
+                    };
+                    console.log(
+                      "hurray students data sent succesfully",
+                      staffAttendance
+                    );
+                    res.json({
+                      message: "hurray",
+                      attendance: staffAttendance,
+                      key: 1,
+                    });
                   }
                 }
               );
@@ -639,32 +643,44 @@ const handlePerformOCR = async (req, res) => {
   const { details } = req.body;
   const { email, fromDate, toDate, reason } = details;
 
-  connection.query(
-    'INSERT INTO leave_log(student_email, from_date, to_date, reason) VALUES (?, ?, ?, ?)',
-    [email, fromDate, toDate, reason],
-    (error, results) => {
-      if (error) {
-        console.log("Error while logging details into leave_log:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-      } else {
-        console.log("Results are:", results);
-        res.json({ message: "Successfully logged values", key: 1 });
+  console.log("ocr text is ", reason);
+  try {
+    // Make a POST request to the Flask server endpoint
+    const flaskResponse = await axios.post(
+      "http://127.0.0.1:5000/generate_record",
+      {
+        ocr_text: reason,
+        email: email,
       }
-    }
-  );
+    );
+
+    // Handle Flask server response
+    console.log("Flask server response:", flaskResponse.data);
+    res.json({ message: "Successfully logged values", key: 1 });
+  } catch (error) {
+    console.error("Error while sending data to Flask server:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-const fetchLeaveRecord = async(req, res) => {
-  const {email} = req.query;
-  console.log("ddd", email);
-  connection.query('select * from leave_log', (error, records) => {
-    if (error) console.log("error while fetching staff id",error);
-    else {
-      console.log(records);
-       res.json({message:"successfully fetched",records})
-    }
-  })
-}
+const fetchLeaveRecord = async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    // Access the default MongoDB connection established by Mongoose
+    const db = mongoose.connection.db;
+    const collection = db.collection("certificates"); // Replace with your collection name
+
+    // Query the collection for records with the specified email
+    const records = await collection.find({ student_email: email }).toArray();
+
+    // Send the records as response
+    res.json({ message: "Successfully fetched", records });
+  } catch (error) {
+    console.error("Error while fetching leave records:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   fetchLeaveRecord,
