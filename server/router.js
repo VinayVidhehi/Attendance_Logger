@@ -220,7 +220,7 @@ const attendanceUpdate = async (req, res) => {
   // Get the current day name (e.g., "Sunday", "Monday")
   const options = { weekday: "long" };
   const currentDay = new Date().toLocaleDateString("en-US", options);
-
+  
   // Split the incoming comma-separated string into an array of IDs
   const incomingIDs = attendanceString.split(",").map(Number);
 
@@ -266,15 +266,14 @@ const attendanceUpdate = async (req, res) => {
       status
     );
 
-    // const updateAttendance = await attendanceUpdateHandler(
-    //   currentDate,
-    //   currentDay,
-    //   courseId,
-    //   statusString
-    // );
-    // console.log("status of updated attendance", updateAttendance);
+    const updateAttendance = await attendanceUpdateHandler(
+      currentDate,
+      currentDay,
+      courseId,
+      statusString
+    );
+    console.log("status of updated attendance", updateAttendance);
 
-    // res.json({ message: "Hello, this is your Express server with CORS!\n" });
     res.json({ message: "Hello, this is your Express server with CORS!\n" });
   } catch (error) {
     console.error("Error in attendanceUpdate:", error);
