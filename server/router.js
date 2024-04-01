@@ -213,7 +213,6 @@ const attendanceUpdate = async (req, res) => {
 
   // Save the attendance string to the database
   const attendanceString = req.query.id;
-  const courseId = req.query.courseId;
   const currentDate = new Date().toISOString().split("T")[0];
 
   // Get the current day name (e.g., "Sunday", "Monday")
@@ -221,7 +220,7 @@ const attendanceUpdate = async (req, res) => {
   const currentDay = new Date().toLocaleDateString("en-US", options);
   
   // Split the incoming comma-separated string into an array of IDs
-  const incomingIDs = attendanceString.split(",").map(Number);
+  let incomingIDs = attendanceString.split(",").map(Number);
 
   try {
     // Fetch student strength
@@ -231,7 +230,17 @@ const attendanceUpdate = async (req, res) => {
     // Initialize status array with 2s
     const status = Array(studentStrength).fill(2);
 
-    incomingIDs.map((id) => {
+    // Process attendance
+    incomingIDs = incomingIDs.filter(id => {
+      if (id > 100) {
+        const courseId = id % 2 === 0 ? '21AI52' : '21CS53';
+        console.log(`Course ID for student ${id} is ${courseId}`);
+        return false; // Remove the student from the attendance
+      }
+      return true; // Keep the student in the attendance
+    });
+
+    incomingIDs.forEach(id => {
       status[id] = 1;
     });
 
@@ -262,7 +271,9 @@ const attendanceUpdate = async (req, res) => {
       "Status string now is",
       statusString,
       " and status array is this ",
-      status
+      status,
+      "course id is ",
+      courseId
     );
 
     const updateAttendance = await attendanceUpdateHandler(
@@ -279,6 +290,7 @@ const attendanceUpdate = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 // Function to get student strength
 const attendanceUpdateHandler = (date, day, course, attendance) => {
