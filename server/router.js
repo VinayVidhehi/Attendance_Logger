@@ -657,7 +657,7 @@ const handlePerformOCR = async (req, res) => {
   try {
     // Make a POST request to the Flask server endpoint
     const flaskResponse = await axios.post(
-      "http://127.0.0.1:5000/generate_record",
+      "https://ams-nlp-ml.onrender.com/generate_record",
       {
         ocr_text: reason,
         email: email,
