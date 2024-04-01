@@ -656,17 +656,13 @@ const handlePerformOCR = async (req, res) => {
   console.log("ocr text is ", reason);
   try {
     // Make a POST request to the Flask server endpoint
-    const flaskResponse = await axios.post(
-      "https://ams-nlp-ml.onrender.com/generate_record",
-      {
-        ocr_text: reason,
-        email: email,
+    connection.query('insert into leave_log (from_date, to_date, reason, student_email) values (?,?,?,?)', [fromDate, toDate, reason, email], (error, result) => {
+      if(error) console.log("error while uplaoding certificate", error)
+      else {
+        res.json({ message: "Successfully logged values", key: 1 });
       }
-    );
+    })
 
-    // Handle Flask server response
-    console.log("Flask server response:", flaskResponse.data);
-    res.json({ message: "Successfully logged values", key: 1 });
   } catch (error) {
     console.error("Error while sending data to Flask server:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -674,18 +670,14 @@ const handlePerformOCR = async (req, res) => {
 };
 
 const fetchLeaveRecord = async (req, res) => {
-  const { email } = req.query;
-
-  try {
-    // Access the default MongoDB connection established by Mongoose
-    const db = mongoose.connection.db;
-    const collection = db.collection("certificates"); // Replace with your collection name
-
-    // Query the collection for records with the specified email
-    const records = await collection.find({ student_email: email }).toArray();
-
-    // Send the records as response
-    res.json({ message: "Successfully fetched", records });
+  
+   try{
+    connection.query('select * from leave_log', (error, records) => {
+      if(error) console.log("error during fetching records from leave log", error);
+      else {
+        res.json({ message: "Successfully fetched", records });
+      }
+    })
   } catch (error) {
     console.error("Error while fetching leave records:", error);
     res.status(500).json({ error: "Internal Server Error" });
