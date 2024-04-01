@@ -96,7 +96,7 @@ const handleUserSignup = async (req, res) => {
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else if (key == 2) {
       const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
-
+      console.log("here are the details", email, Counsellor[0]);
       console.log("counsellor is ",Counsellor);
       // Handle user registration and OTP validation
       if (!OTP) {
@@ -124,7 +124,8 @@ const handleUserSignup = async (req, res) => {
 
       const id = parseInt(usn.substring(usn.length - 3), 10);
       connection.query(
-        `select staff_id from staff where staff_name = '${Counsellor}'`,
+        "select staff_id from staff where staff_name = ?",
+        [Counsellor],
         async (error, results) => {
           if (error)
             console.log("error while finding staff_id from staff_name", error);
@@ -231,17 +232,7 @@ const attendanceUpdate = async (req, res) => {
     // Initialize status array with 2s
     const status = Array(studentStrength).fill(2);
 
-    // Process attendance
-    incomingIDs = incomingIDs.filter(id => {
-      if (id > 100) {
-        const courseId = id % 2 === 0 ? '21AI52' : '21CS53';
-        console.log(`Course ID for student ${id} is ${courseId}`);
-        return false; // Remove the student from the attendance
-      }
-      return true; // Keep the student in the attendance
-    });
-
-    incomingIDs.forEach(id => {
+    incomingIDs.map((id) => {
       status[id] = 1;
     });
 
@@ -297,8 +288,7 @@ const attendanceUpdate = async (req, res) => {
 const attendanceUpdateHandler = (date, day, course, attendance) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `insert into course_attendance (date, day, course_id, attendance) values (?,?,?,?)`,
-      [date, day, course, attendance],
+      `insert into course_attendance (date, day, course_id, attendance) values ('${date}','${day}','${course}','${attendance}')`,
       (error, result) => {
         if (error) {
           console.log("error while uploding attendance", error);
@@ -454,19 +444,17 @@ const getStaffAttendance = async (req, res) => {
   const { email } = req.query;
 
   connection.query(
-    "SELECT course_id FROM staff WHERE staff_email = ?",
-    [email],
+    `SELECT course_id FROM staff WHERE staff_email = '${email}'`,
     (error, courseId) => {
       if (error) {
         console.log(error);
         res.status(500).json({ error: "Internal Server Error" });
       } else {
         console.log("courseId found is ", courseId);
-
         const course = `'${courseId[0].course_id}'`;
         console.log("god is ", course);
         connection.query(
-          `select attendance, date from course_attendance where course_id = '${courseId}'`,
+          `select attendance, date from course_attendance where course_id = ?`, [courseId[0].course_id],
           (error, attendanceString) => {
             if (error)
               console.log("error while fetching attendance string", error);

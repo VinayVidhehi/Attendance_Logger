@@ -22,19 +22,19 @@ const Staff = () => {
 
   const courseData = async () => {
     const response = await axios.get(
-      `http://localhost:7800/course-details?email=${email}&key=1`
+      `https://textstrict-app.onrender.com/course-details?email=${email}&key=1`
     );
     setNotifications("choose from the following")
     if (response.data.key === 1) {
       setCheckCourse(false);
       console.log("am i here?");
       const isCounsellor = await axios.get(
-        `http://localhost:7800/counsellor-check?email=${email}`
+        `https://textstrict-app.onrender.com/counsellor-check?email=${email}`
       )
         if (isCounsellor.data.key == 1) setCounsellor(true);
 
         const staffAttendance = await axios.get(
-          `http://localhost:7800/attendance-staffview?email=${email}`
+          `https://textstrict-app.onrender.com/attendance-staffview?email=${email}`
         );
           if (staffAttendance.data.key == 1) {
             setStudentAttendance(staffAttendance.data.attendance);
@@ -49,7 +49,7 @@ const Staff = () => {
 
   const handleFetchLeaveRecord = async () => {
     const response = await axios.get(
-      `http://localhost:7800/leave-records?${email}`
+      `https://textstrict-app.onrender.com/leave-records?${email}`
     );
     console.log("response is ", response.data.records);
     const records = response.data.records;

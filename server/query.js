@@ -31,12 +31,12 @@ connection.connect((err) => {
 
 // Define a route handler
 app.get('/deleteCourse', (req, res) => {
-  const courseId = '21AI52';
+  const courseId = '21CS53';
   const courseName = 'AI and ML';
   const staffName = 'Raghavendra Prasad S G'
   const credits = 4;
   const isLab = 1;
-  const email = 'raghavendrap@rvce.edu.in';
+  const email = 'vinayvidhehi@gmail.com';
   const query = `INSERT INTO students (student_id, student_name, student_email, usn, batch, staff_id)
   VALUES
       -- Batch 1
@@ -109,9 +109,7 @@ app.get('/deleteCourse', (req, res) => {
   VALUES 
   (61, 'vinaykumad.is21@rvce.edu.in', 'Vinay Kumar', '1RV21IS061', '3', 1);`
 
-  connection.query(`select * from course_attendance
-  
-
+  connection.query(`select attendance, date from course_attendance where course_id = '21CS53'
   `,[sub], (error, result) => {
     if (error) {
       console.log("Error deleting records:", error);
