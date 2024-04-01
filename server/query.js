@@ -14,10 +14,10 @@ app.use(bodyParser.json());
 
 // MySQL Connection
 const connection = mysql.createConnection({
-  host: "mysql-36e54173-mulberrydatabase.a.aivencloud.com",
-  port: 24400,
+  host: "attendance-logger-spoorthivarumbudi-ddc7.a.aivencloud.com",
+  port: 12226,
   user: "avnadmin",
-  password: "AVNS_PXPi8DwKVq_UOKMdt1m",
+  password: "AVNS_aRs9_9YVW7p-mEzvwzx",
   database: "defaultdb",
 });
 
@@ -105,8 +105,12 @@ app.get('/deleteCourse', (req, res) => {
   
   `;
   const sub = "'21AI52'";
+  const querye = `INSERT INTO students (student_id, student_email, student_name, usn, batch, staff_id)
+  VALUES 
+  (61, 'vinaykumad.is21@rvce.edu.in', 'Vinay Kumar', '1RV21IS061', '3', 1);`
 
-  connection.query(`select * from achievements
+  connection.query(`select * from course_attendance
+  
 
   `,[sub], (error, result) => {
     if (error) {
@@ -114,7 +118,7 @@ app.get('/deleteCourse', (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     } else {
       console.log("Records deleted successfully:", result);
-      res.status(200).json({ message: "Records deleted successfully" });
+      res.status(200).json({ result });
     }
   });
 });

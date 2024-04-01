@@ -80,7 +80,7 @@ const handleUserSignup = async (req, res) => {
       }
       if (user) {
         // If user already exists, send a response indicating that
-        console.log("i should be here");
+       //console.log("i should be here");
         return res.send({
           message: "User already exists. Please sign in instead",
           key: 0,
@@ -97,6 +97,7 @@ const handleUserSignup = async (req, res) => {
     } else if (key == 2) {
       const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
 
+      console.log("counsellor is ",Counsellor);
       // Handle user registration and OTP validation
       if (!OTP) {
         throw new Error("OTP is required");
@@ -123,8 +124,7 @@ const handleUserSignup = async (req, res) => {
 
       const id = parseInt(usn.substring(usn.length - 3), 10);
       connection.query(
-        "select staff_id from staff where staff_name = ?",
-        [Counsellor],
+        `select staff_id from staff where staff_name = '${Counsellor}'`,
         async (error, results) => {
           if (error)
             console.log("error while finding staff_id from staff_name", error);
@@ -214,7 +214,6 @@ const attendanceUpdate = async (req, res) => {
 
   // Save the attendance string to the database
   const attendanceString = req.query.id;
-  const courseId = req.query.courseId;
   const currentDate = new Date().toISOString().split("T")[0];
 
   // Get the current day name (e.g., "Sunday", "Monday")
@@ -222,7 +221,7 @@ const attendanceUpdate = async (req, res) => {
   const currentDay = new Date().toLocaleDateString("en-US", options);
   
   // Split the incoming comma-separated string into an array of IDs
-  const incomingIDs = attendanceString.split(",").map(Number);
+  let incomingIDs = attendanceString.split(",").map(Number);
 
   try {
     // Fetch student strength
@@ -232,7 +231,17 @@ const attendanceUpdate = async (req, res) => {
     // Initialize status array with 2s
     const status = Array(studentStrength).fill(2);
 
-    incomingIDs.map((id) => {
+    // Process attendance
+    incomingIDs = incomingIDs.filter(id => {
+      if (id > 100) {
+        const courseId = id % 2 === 0 ? '21AI52' : '21CS53';
+        console.log(`Course ID for student ${id} is ${courseId}`);
+        return false; // Remove the student from the attendance
+      }
+      return true; // Keep the student in the attendance
+    });
+
+    incomingIDs.forEach(id => {
       status[id] = 1;
     });
 
@@ -263,7 +272,9 @@ const attendanceUpdate = async (req, res) => {
       "Status string now is",
       statusString,
       " and status array is this ",
-      status
+      status,
+      "course id is ",
+      courseId
     );
 
     const updateAttendance = await attendanceUpdateHandler(
@@ -280,6 +291,7 @@ const attendanceUpdate = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 // Function to get student strength
 const attendanceUpdateHandler = (date, day, course, attendance) => {
@@ -454,8 +466,7 @@ const getStaffAttendance = async (req, res) => {
         const course = `'${courseId[0].course_id}'`;
         console.log("god is ", course);
         connection.query(
-          `select attendance, date from course_attendance where course_id = ?`,
-          [course],
+          `select attendance, date from course_attendance where course_id = '${courseId}'`,
           (error, attendanceString) => {
             if (error)
               console.log("error while fetching attendance string", error);
@@ -645,17 +656,13 @@ const handlePerformOCR = async (req, res) => {
   console.log("ocr text is ", reason);
   try {
     // Make a POST request to the Flask server endpoint
-    const flaskResponse = await axios.post(
-      "http://127.0.0.1:5000/generate_record",
-      {
-        ocr_text: reason,
-        email: email,
+    connection.query('insert into leave_log (from_date, to_date, reason, student_email) values (?,?,?,?)', [fromDate, toDate, reason, email], (error, result) => {
+      if(error) console.log("error while uplaoding certificate", error)
+      else {
+        res.json({ message: "Successfully logged values", key: 1 });
       }
-    );
+    })
 
-    // Handle Flask server response
-    console.log("Flask server response:", flaskResponse.data);
-    res.json({ message: "Successfully logged values", key: 1 });
   } catch (error) {
     console.error("Error while sending data to Flask server:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -663,18 +670,14 @@ const handlePerformOCR = async (req, res) => {
 };
 
 const fetchLeaveRecord = async (req, res) => {
-  const { email } = req.query;
-
-  try {
-    // Access the default MongoDB connection established by Mongoose
-    const db = mongoose.connection.db;
-    const collection = db.collection("certificates"); // Replace with your collection name
-
-    // Query the collection for records with the specified email
-    const records = await collection.find({ student_email: email }).toArray();
-
-    // Send the records as response
-    res.json({ message: "Successfully fetched", records });
+  
+   try{
+    connection.query('select * from leave_log', (error, records) => {
+      if(error) console.log("error during fetching records from leave log", error);
+      else {
+        res.json({ message: "Successfully fetched", records });
+      }
+    })
   } catch (error) {
     console.error("Error while fetching leave records:", error);
     res.status(500).json({ error: "Internal Server Error" });

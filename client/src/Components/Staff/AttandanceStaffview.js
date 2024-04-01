@@ -20,6 +20,7 @@ const AttendanceStaffView = () => {
   useEffect(() => {
     if (location.state && location.state.attendance) {
       const attendance = location.state.attendance;
+      console.log(attendance);
       if (attendance.students && attendance.attendanceString) {
         setAttendanceData(attendance.students);
         setAttendanceDates(attendance.attendanceString);

@@ -14,7 +14,7 @@ const CertificateDisplay = () => {
 
     // Filter records based on the search query
     const filteredRecords = records.filter(record =>
-        record && record.email && record.email.toLowerCase().includes(searchQuery.toLowerCase())
+        record && record.student_email && record.student_email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     // Handle search query changes
@@ -42,11 +42,11 @@ const CertificateDisplay = () => {
                             <h2>{record.type === 'medical' ? 'Medical Certificate' : 'Non-Medical Certificate'}</h2>
                             {record.type === 'medical' ? (
                                 <p>
-                                    Patient Email: {record.email}<br/>
+                                    Patient Email: {record.student_email}<br/>
                                     {record.reason}
                                 </p>
-                            ) : (
-                                <p>{record.reason}</p>
+                            ) : (<p>{record.student_email}<br/>
+                                {record.reason}</p>
                             )}
                         </div>
                     ))
