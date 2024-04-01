@@ -234,7 +234,7 @@ const attendanceUpdate = async (req, res) => {
     let courseId = "";
     incomingIDs = incomingIDs.filter(id => {
       if (id > 100) {
-        courseId = id % 2 === 0 ? '21AI52' : '21CS53';
+        courseId = id % 2 === 0 ? "21AI52" : "21CS53";
         console.log(`Course ID for student ${id} is ${courseId}`);
         return false; // Remove the student from the attendance
       }
@@ -297,8 +297,7 @@ const attendanceUpdate = async (req, res) => {
 const attendanceUpdateHandler = (date, day, course, attendance) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `insert into course_attendance (date, day, course_id, attendance) values (?,?,?,?)`,
-      [date, day, course, attendance],
+      `insert into course_attendance (date, day, course_id, attendance) values ('${date}','${day}','${course}','${attendance}')`,
       (error, result) => {
         if (error) {
           console.log("error while uploding attendance", error);
