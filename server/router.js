@@ -231,9 +231,10 @@ const attendanceUpdate = async (req, res) => {
     const status = Array(studentStrength).fill(2);
 
     // Process attendance
+    let courseId = "";
     incomingIDs = incomingIDs.filter(id => {
       if (id > 100) {
-        const courseId = id % 2 === 0 ? '21AI52' : '21CS53';
+        courseId = id % 2 === 0 ? '21AI52' : '21CS53';
         console.log(`Course ID for student ${id} is ${courseId}`);
         return false; // Remove the student from the attendance
       }
