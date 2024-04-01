@@ -123,8 +123,7 @@ const handleUserSignup = async (req, res) => {
 
       const id = parseInt(usn.substring(usn.length - 3), 10);
       connection.query(
-        "select staff_id from staff where staff_name = ?",
-        [Counsellor],
+       `select staff_id from staff where staff_name = '${Counsellor}'`,
         async (error, results) => {
           if (error)
             console.log("error while finding staff_id from staff_name", error);
