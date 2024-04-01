@@ -96,7 +96,7 @@ const handleUserSignup = async (req, res) => {
         .send({ message: "OTP sent to your email successfully", key: 1 });
     } else if (key == 2) {
       const { email, Name, Counsellor, OTP, password, usn, batch } = req.body;
-
+      console.log("here are the details", email, Counsellor);
       // Handle user registration and OTP validation
       if (!OTP) {
         throw new Error("OTP is required");
