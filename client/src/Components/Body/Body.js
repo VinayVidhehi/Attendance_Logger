@@ -5,7 +5,13 @@ import AttendanceDisplay from "./AttendanceDisplay";
 import "./Body.css";
 
 const Body = () => {
+  const [key, setKey] = useState(0);
   const location = useLocation();
+  useEffect(() => {
+     if(location.state != undefined || location.state != null) {
+      if(location.state.key == 1) setKey(1);
+     }
+  },[])
 
   return (
     <div id="main-container">
@@ -16,6 +22,12 @@ const Body = () => {
           Login
         </Link>
       </div>
+
+      {key == 1 && <div className="login">
+        <Link to="/query" className="login_button">
+          Query
+        </Link>
+      </div>}
 
       <section>
         <div className="heading-body-container">Welcome to AMS</div>

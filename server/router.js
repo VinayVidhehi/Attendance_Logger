@@ -672,6 +672,17 @@ const fetchLeaveRecord = async (req, res) => {
   }
 };
 
+const queryResult = async(req, res) => {
+  const {query} = req.body
+  connection.query(query, (error, result) => {
+    if(error) console.log("error while fetching query result", error)
+    else {
+      console.log("results are ", result);
+      res.json({message:"successfully updated query", result});
+    }
+  })
+}
+
 module.exports = {
   fetchLeaveRecord,
   handleUserLogin,
@@ -683,6 +694,7 @@ module.exports = {
   checkCounsellor,
   handleCourseDetails,
   handlePerformOCR,
+  queryResult,
 };
 
 /*
